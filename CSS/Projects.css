@@ -1,0 +1,403 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap');
+
+
+.project-header {
+
+	box-shadow: 0 0px 12px -2px #333;
+	width: 100%;
+	z-index: 1;
+}
+
+.project-header section {
+	text-align: left;
+	margin-left: 7vw;
+}
+
+.problems-navigation {
+	display: grid;
+	align-content: center; 
+	align-items: center;
+	grid-template-columns: 1fr 1fr;
+}
+
+
+.project-header p {
+	font-size: 15px;
+	text-indent: 20px;
+}
+
+.content > .project-header h1 {	
+	padding-top: 0px;	
+	font-size: 25px;
+	color: var(--themePrimary);
+}
+
+.content > .project-header h1:hover {
+
+	color: var(--themeSecondary);
+	transition: color 1s ease-in;
+}
+
+
+.problemsSearchBarDiv {
+	grid-column-start: 2;
+	grid-row-start: 1;
+	display: flex;	
+  	align-items: center;
+ 	justify-content: center;
+}
+
+.problemsSearchBar {
+
+	
+	background: white url(../Images/search_icon.svg) no-repeat 1px center;
+	background-size: 28px 28px;	
+	padding: 9px 10px 9px 32px;
+	width: 12px;
+	border: 0;
+	border-radius: 60%;
+	margin-left: 70%;
+	color: transparent;
+	cursor: pointer;
+	transition: all 0.4s ease-in-out;
+}
+
+.problemsSearchBar:focus {
+	
+	color: var(--textColor);
+	width: 100%;
+	margin-left: 0%;
+	cursor: default;
+	border-radius: 12px;
+	box-sizing: border-box;
+	border: 2px solid var(--themePrimary);
+	-webkit-tap-highlight-color: transparent;	
+	transition: all 0.4s ease-in-out;
+}
+
+.project-options-container {
+	
+	height: 80px;
+	background-color: var(--hoverColor); 
+    background: linear-gradient(to right, var(--themePrimary), var(--themeSecondary) );
+	color: white;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1ft 1fr;
+	font-family: 'Roboto Slab', serif;	
+}
+
+.projectSortByDiv {
+	
+	grid-column-start: 1;
+	grid-row-start: 2;
+	
+	display: flex;
+	
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	
+}
+
+.project-options-container div {
+	margin: 0;
+	padding: 0;
+}
+
+.project-options-container > .projectSortByDiv label {
+	
+	font-size: 15px;
+	padding-right: 5px;
+	font-family: 'Roboto Slab', serif;
+
+}
+
+.project-options-container > .projectSortByDiv select { 
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	color: inherit;
+	font-weight: 500;
+	background: transparent;
+	outline: none;
+	box-shadow: none;
+	border: 0;
+    padding: 0;
+	font-size: 13px;	
+	font-family: 'Roboto Slab', serif;	
+	
+}
+.project-options-container > .projectSortByDiv::after {
+	display: block;
+	content: "\f0d7";
+	font-family: FontAwesome;
+}
+
+.project-options-container > .projectSortByDiv option {
+	
+	color: white;
+	border: 0;
+	padding: 0;
+	font-family: 'Roboto Slab', serif;
+	
+}
+
+.project-list {
+	display: flex;
+	align-content: center;
+	align-items: center;
+	flex-direction: column;	
+	
+}
+
+
+/* Project elements */
+
+.project-element {
+	
+	position: relative;
+	
+	box-shadow: 0px 0px 1px #333;
+	width: 100%;
+	height: 100%;	
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+	transform: translateY(0);
+	transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.project-element.project-element-hidden {
+
+	opacity: 0;
+	transform: translateY(100px);
+
+}
+
+
+.project-element:target {
+	background-color: black;
+}
+
+
+.project-hidden {
+	display: none;
+}
+
+.project-view-button {
+
+	height: 50%;
+	width: 130px;
+    
+	background-color: var(--themeSecondary);
+	border: none;
+    color: white;
+	
+	font-family: 'Roboto Slab', serif;
+	font-size: 15px;
+	margin: 4px 2px;
+	border-radius: 12px;
+}
+
+.project-view-button:active {
+	transform: scale(0.95);
+}
+
+.project-author {
+	grid-column-start: 2;
+	grid-row-start: 1;
+	padding-left:  10%;
+	overflow: hidden;
+}
+
+.project-brief {
+	grid-column-start: 1;
+	grid-row-start: 1;
+	word-break: break-all;   
+	overflow: hidden;
+}
+
+.project-brief p {
+	
+	position: relative;
+	font-size: 17px;
+	font-weight: bold;
+	text-align: center;
+    
+	display: flex;
+	justify-content: center;
+	align-items: center;
+		
+	flex-wrap: wrap;
+	align-content: center;
+	
+	//justify-content: flex-start;
+}
+
+
+.project-view-div {
+	position: relative;
+	
+	grid-column-start: 3;
+	grid-row-start: 1;
+	
+	width: 100%;
+	height: 100%;
+	display: inline-flex;
+	align-content: center;
+	align-items: center;
+	justify-content: center;
+}
+
+
+.project-brief p::before {
+    content:"\A";
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    background: #000;
+   	display: inline-block;
+}
+
+
+.project-brief.hard p::before {
+	background-color: #A61D27;
+}
+
+.project-brief.medium p::before {
+	background-color: #C7A800;
+}
+
+.project-brief.easy p::before {
+	background-color: #5DBF39;
+}
+
+.projectDetails {
+	
+	max-height: 0;
+
+	position: relative;
+	width: 100%;
+
+	background: var(--hoverColorDarker);
+	background: -webkit-linear-gradient(to bottom, white, var(--hoverColorDarker));
+    background: linear-gradient(to bottom, white, var(--themePrimary));
+
+	//box-shadow: 0px 0px 1px #333;
+
+
+	transform: scaleY(0);
+	transform-origin: top;
+	//transition: transform 1s ease-in-out;
+}
+
+.project-element:focus + .projectDetails {
+	
+	max-height: 100%;
+
+	transform: scaleY(1);
+	transform-origin: top;
+	transition: transform 0.4s ease-in;
+}
+
+.projectDetailsExtras ul {
+	display: grid;
+	position: relative;
+	
+	grid-template-columns: repeat(2, 50%);
+	grid-template-rows: repeat(2, 50%);
+	
+	justify-content: center;
+	align-content: center;
+	text-align: center;
+	margin-top: 3%;
+	gap: 10px;
+	font-size: 15px;
+	font-family: 'Roboto', sans-serif;
+}
+
+
+.detailsTopLeft {
+	grid-row-start: 1;
+	grid-column-start: 1;
+}
+
+.detailsTopRight {
+	grid-row-start: 1;
+	grid-column-start: 2;	
+}
+
+.detailsDownLeft {
+	grid-row-start: 2;
+	grid-column-start: 1;
+}
+
+.detailsDownRight {
+	grid-row-start: 2;
+	grid-column-start: 2;	
+}
+
+.projectDetailsBrief {
+	grid-column-start: 1;
+}
+
+.projectDetailsBrief p {
+	margin: 5%;
+	text-indent: 20px;
+	word-break: break-word;
+}
+
+.projectDetailsBrief p:first-letter {
+	text-transform: uppercase;
+	font-size: 25px;
+}
+
+.projectDetailsBrief p:first-letter {
+	text-transform: uppercase;
+	font-size: 25px;
+}
+
+
+@media only screen and (min-width: 650px)  {
+
+	.project-brief p {
+		
+		justify-content: left;
+		margin-left: 10%;
+	}
+	
+	
+	.project-brief p::before {
+        position: relative;
+        margin-right: 10px;		
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+	
+	.problemsSearchBarDiv {
+
+		align-items: right;
+		justify-content: right;
+	}
+	
+	.problemsSearchBar {
+	
+		margin-right: 50%;
+		border-radius: 60%;
+	}
+
+	.problemsSearchBar:focus {
+		
+		margin-right: 35%;
+		width: 40%;
+	}
+	
+	.project-element, .projectDetails {
+		width: 75%;
+	}
+	
+}
