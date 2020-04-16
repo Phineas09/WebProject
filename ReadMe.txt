@@ -1,0 +1,1 @@
+SVG-urile au fost luate de pe : https://undraw.co/

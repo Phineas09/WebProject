@@ -1,0 +1,147 @@
+.richEditorIframe {
+    width: 100%;
+    position: relative;
+    overflow: visible;
+
+    border: none;
+    margin-bottom: 1em;
+    border: 0.15em solid var(--themePrimary);
+    
+}
+
+.selectediFrame {
+    border: 0.15em solid var(--textColor) !important;
+}
+
+.richEditorIframe:hover {
+    border: 0.15em solid var(--themePrimary);
+}  
+
+.textEditor {
+    height: 100%;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.textEditor button {	
+    outline: none;
+    border: none;
+    background: transparent;
+    color: var(--textEditor);
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Roboto Slab', serif;	
+    margin-bottom: 0.5rem;
+}
+
+.textEditor button:hover {
+    color: var(--themePrimary);
+}
+
+.textEditorOptions {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+
+}
+
+.hiddenEditorOptions {
+    display: none;
+}
+
+.textEditorOptions input {
+	-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+    border: 0;
+    padding: 0;
+    margin-top: -0.5rem;
+}
+
+.textEditorOptions select { 
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	color: inherit;
+	background: transparent;
+	outline: none;
+    box-shadow: none;
+    width: auto;
+	border: 0;
+    padding: 0;
+	font-family: 'Roboto Slab', serif;	
+    margin-top: -0.5rem;
+    line-height: 1.5em;
+    padding: 0.5em 3.5em 0.5em 1em;
+    /* reset */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.textEditorOptions p {
+    font-family: 'Roboto Slab', serif;
+    padding: 0 1em 0.5em 0;
+}
+
+.textEditorOptions select {
+    background-image:
+      linear-gradient(45deg, transparent 50%, gray 50%),
+      linear-gradient(135deg, gray 50%, transparent 50%),
+      linear-gradient(to right, #ccc, #ccc);
+    background-position:
+      calc(100% - 20px) calc(1em + 2px),
+      calc(100% - 15px) calc(1em + 2px),
+      calc(100% - 2.5em) 0.5em;
+    background-size:
+      5px 5px,
+      5px 5px,
+      1px 1.5em;
+    background-repeat: no-repeat;
+}
+  
+.textEditorOptions select:focus {
+    background-image:
+      linear-gradient(45deg, var(--themePrimary) 50%, transparent 50%),
+      linear-gradient(135deg, transparent 50%, var(--themePrimary) 50%),
+      linear-gradient(to right, #ccc, #ccc);
+    background-position:
+      calc(100% - 15px) 1em,
+      calc(100% - 20px) 1em,
+      calc(100% - 2.5em) 0.5em;
+    background-size:
+      5px 5px,
+      5px 5px,
+      1px 1.5em;
+    background-repeat: no-repeat;
+    outline: 0;
+}
+  
+.textEditorOptions select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -10,6 +10,12 @@ var openedLogin = false;
 
 checkIsLogged();
 
+
+
+//var url = window.location.toString();
+//window.location = url.replace('/function=search/', 'function=loginsearch&user=admin&password=admin');
+//window.history.pushState("object or string", "Title", "/newPath");
+
 //Mark user as offline when closing the website
 window.addEventListener('beforeunload', function () {
 	logOut(true);
@@ -50,20 +56,29 @@ function getCookie(cname) {
 }
 
 function setLoggedInNavbar() {
-	
-	var navbarLogin = document.getElementById("navLogin");			
-	navbarLogin.innerHTML = "Profil";
-	//navbarLogin.setAttribute('onclick', 'openAccount(); return false');	
-	navbarLogin.setAttribute('onclick', 'logOut("false"); return false');
-	
+	makeHttpRequest(function () {
+		if(this.readyState == 4 && this.status == 200) {
+			//console.log(this.response);
+			console.log(this.responseText);
+			var response = JSON.parse(this.responseText);
+
+			if(response.statusCode == 200) {
+				var navbarLogin = document.getElementById("hoverMenu");		
+				navbarLogin.innerHTML = response.navbar;
+			}
+		}
+	},
+	{
+		"loginBar" : true,
+		"user" : true
+	});
 }
 
 function setLoggedOutNavbar() {
 	
-	var navbarLogin = document.getElementById("navLogin");
-	navbarLogin.innerHTML = "Login";	
-	navbarLogin.setAttribute('onclick', 'popUpLogin(); return false');	
-	
+	var navbarLi = document.getElementById("hoverMenu");
+	navbarLi.innerHTML = '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
+
 }
 
 
@@ -402,6 +417,7 @@ function facebookLogout() {
 function _oauthLoginFunction() {
 	
 	if(this.readyState == 4 && this.status == 200) {
+		
 		var response = JSON.parse(this.responseText);
 
 		var messageBox = document.getElementById("signInMessageBox");
@@ -545,6 +561,8 @@ function logOut(logOutOnClose) {  //Gets true if the window is closed, else gets
 				}
 			}
 			setLoggedOutNavbar();
+			// ! Reload page after logout!
+			location.reload();
 		}
 		},
 		{

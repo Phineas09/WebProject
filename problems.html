@@ -37,8 +37,18 @@
 					<li><a href="#" onclick="pageChangeProjects(); return false">Problems</a></li>		
 					<li><a href="#" onclick="facebookLogout(); return false">Forum</a></li>			
 					<li><a href="#" onclick="googleLogout(); return false">Contact</a></li>			
-					<li><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
+					<li id="hoverMenu">
+						<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>
+						<div class="hidden-navbar-ul">
+							<ul>
+								<li><a href="#" onclick="pageChangeProjects(); return false">Admin</a></li>		
+								<li><a href="#" onclick="facebookLogout(); return false">Profile</a></li>			
+								<li><a href="#" onclick="googleLogout(); return false">LogOut</a></li>
+							</ul>	
+						</div>
+					</li>
 				</ul>
+				
 			</nav>
 
 			<label id="nav-toggle-label" for="nav-toggle" class="nav-toggle-label">
@@ -115,19 +125,26 @@
 						
 						<h1>Problems</h1>
 						<div class="problemsSearchBarDiv">
-							<input oninput="console.log('a')" type="text" name="search" class="problemsSearchBar" placeholder="Search..">
+							<input onfocus="this.value = '';" 
+							oninput="searchProblemsSort(this.value)" type="text" name="search" 
+							class="problemsSearchBar" placeholder="Search..">
 						</div>
 					</div>
 					<p>Improve your skills by training with some real code challenges.</p>
 				</section>
-			</div>
+			</div> 
 		</div>
 	
 		<div class="project-options-container">
-	
+			
+			<div class="project-options" >
+				<button class="project-view-button" onclick='newProject(); return false'><i class="fas fa-plus-circle"></i> New Project</button>
+				<button class="project-view-button" onclick='pendingApproval(); return false'><i class="fas fa-check-circle"></i> View Pending</button>
+			</div>
+
 			<div class="projectSortByDiv">	
 				<label for="projectSortBy">Sort By:</label>
-				<select onchange="loadProblemList(this.options[this.selectedIndex].text, 'asc')" id="projectsSortBy">
+				<select id="sortBySelector" onchange="loadProblemList(this.options[this.selectedIndex].text, 'asc')" id="projectsSortBy">
 				<option value="name">Name</option>
 				<option value="author">Author</option>
 				<option value="difficulty">Difficulty</option>

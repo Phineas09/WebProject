@@ -54,7 +54,7 @@ class ProblemsManager
         
         $contents = 
             '<div tabindex="-1" class="project-element ' . $hidden . '">
-                <a id="projectId" class="project-hidden">' . $problem->id . '</a>
+                <a class="project-hidden">' . $problem->id . '</a>
                 <div id="projectName" class="project-brief ' . $problem->difficulty . '">
                 <p>' . $problem->name . ' </p>
                 </div>

@@ -7,6 +7,7 @@
     require_once("./Logger.php");
     require_once("./PageChanger.php");
     require_once("./ProblemsManager.php");
+    require_once('./User.php');
 
 
 	ORM::configure('mysql:host=localhost;dbname=mtarena');
@@ -68,10 +69,39 @@
             CONSTRAINT fk_problemApproved_id FOREIGN KEY (problem) REFERENCES problems(id) 
     );";
 
+    $logs = "
+        CREATE TABLE IF NOT EXISTS logs (
+            user INTEGER NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT FK_USER_LOGS_ID FOREIGN KEY (user) REFERENCES users(id)
+    );";
+
+    $logs_view = "
+        CREATE OR REPLACE VIEW userStatistics AS 
+            SELECT
+            user,
+            DATE(date) as day
+            FROM logs
+            GROUP by user, day
+            ORDER BY day
+    ;";  
+
+    $privilege = "
+        CREATE TABLE IF NOT EXISTS privileges (
+            user INTEGER NOT NULL,
+            is_admin BOOLEAN DEFAULT false,
+            can_modify BOOLEAN DEFAULT false,
+            can_approve BOOLEAN DEFAULT false,
+            CONSTRAINT fk_user_privileges FOREIGN KEY (user) REFERENCES users(id)
+    );";
+
 
 // ! To do ProblemsDetails and Problems IO files, pictures and others ????????????
 
     $db->exec($users . $problems . $problems_solved . $problems_pending . $problems_approvedBy);
+    $db->exec($logs);
+    $db->exec($logs_view);
+    $db->exec($privilege);
 
     header("Content-Type: application/json");
     // build a PHP variable from JSON sent using POST method
@@ -95,7 +125,6 @@
         $changer = new PageChanger();
         return $changer->handler($_MyPost);
     }
-
 
     if(isset($_MyPost->loadProblems)) {
         try {
@@ -146,6 +175,30 @@
                 ));
         }
         exit;
+    }
+
+    if(isset($_MyPost->user)) {
+        if(isset($_MyPost->loginBar)) {
+            try {
+                $user = new User();
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'navbar' => $user->getUserNavbar()
+                    ));
+            } 
+            catch (Exception $e) {
+                echo json_encode(
+                    array(
+                        'statusCode' => 415,
+                        'Caught exception: ' => $e->getMessage()
+                    ));
+            }
+            exit;
+        }
+
+
+
     }
 
 

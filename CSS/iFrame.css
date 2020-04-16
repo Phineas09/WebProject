@@ -1,0 +1,23 @@
+.codebox {
+    background-color:#EEEEFF;
+    width:300px;
+    padding:10px;
+    border: none;
+    margin: none;
+}
+.codebox code {
+    font-size:0.9em;
+}
+
+html, body {
+    margin: 0;
+    height: fit-content;  
+}
+
+#container {
+    max-width: 700px;
+    margin: 0 auto;
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 20px;
+}

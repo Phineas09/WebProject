@@ -10,7 +10,7 @@
 	--textColor: gray;
 	--themePrimary: #72b872;
 	--themeSecondary: #339933;
-
+	--textEditor: #333;
 	--theme-darkness: 1;
 }
 
@@ -18,6 +18,6 @@
 	--themePrimary: #16BFFD;
 	--themeSecondary: #CB3066;
 	--textColor: gray;
-	
+	--textEditor: #333;
 	--theme-darkness: 1;
 }

@@ -1,10 +1,10 @@
 <!doctype html>
-<html id="mainHtml">
+<html id="mainHtml"  lang="en">
 <head>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	
+
 	<link rel="stylesheet"	href="./CSS/Themes.css">
 	<link rel="stylesheet"  href="./CSS/Login.css">
 	<link rel="stylesheet"  href="./CSS/Style.css">
@@ -29,16 +29,16 @@
 
 <body id="body">
 		<div id="navbarHeader" class="navbarHeader">
-			<h1 id="logo" onclick="pageChangeHome(); return false" class="logo">MTARENA</h1>
+			<h1 id="logo" onclick='changePage("Home"); return false' class="logo">MTARENA</h1>
 			<input type="checkbox" onClick="makeBlurry()" id="nav-toggle" class="nav-toggle">
 
 			<nav id="navbar">
 				<ul id="navbar-ul">
 					<li><a>   </a></li>
-					<li><a href="#" onclick="pageChangeProjects(); return false">Problems</a></li>			
+					<li><a href="#" onclick='changePage("Problems"); return false'>Problems</a></li>				
 					<li><a href="#" onclick="facebookLogout(); return false">Forum</a></li>			
 					<li><a href="#" onclick="googleLogout(); return false">Contact</a></li>			
-					<li><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
+					<li id="hoverMenu"><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
 				</ul>
 			</nav>
 
@@ -105,13 +105,13 @@
 		</div>
 	
 <div id="page-container">
-	<div id="content" value="homePage" class="content">
+	<div id="content" class="content">
 		<div id="contentContainerScroll" class="content-container fill-screen-no-scroll">
 
 			<section id="home-content-container-section">
 				<img src="Images/home_desktop_programmer.svg" ondragstart="return false" alt="Programming image" class="programmer selectDisable">
 
-				<h1>Achieve mastery through challanges</h1>
+				<h2>Achieve mastery through challanges</h2>
 				<p class="subhead">Improve your skills by training with others on real code challenges.</p>
 
 				<!-- img src="Images/scroll.svg" alt="scroll down" class="scroll hide-mobile show-desktop"> -->

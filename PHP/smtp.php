@@ -29,7 +29,7 @@
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Password reset';
-            $mail->Body    = "Hello" . "<b>in bold!</b> <br>"  . $newPassword ;
+            $mail->Body    = "Hello, " . $name . " this is your new password! <br><br><b>"  . $newPassword . "</b>";
 
             $mail->send();
             echo 'Message has been sent';

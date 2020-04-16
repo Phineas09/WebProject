@@ -1,7 +1,6 @@
 // JavaScript Document
 
 
-
 class PageChanger {
 	
 	constructor(page, link="/PHP/demo.php") {
@@ -54,13 +53,48 @@ class PageChanger {
 	
 }
 
+// ! Page history thingy
 
+/*
+jQuery(document).ready(function($) {
 
+    if (window.history && window.history.pushState) {
 
+        window.history.pushState('', 'dummy', './');
+
+        $(window).on('popstate', function() {
+
+			if(historyStack.length != 0) {
+				window.history.pushState('', 'dummy', './'); 
+				currentPage = historyStack.pop();
+				pageDictionary[currentPage]();
+			}
+			else{
+				window.history.back();
+			}
+        });
+    }
+});
+*/
 // Page management part !@!
 
 
 var pageChanger = new PageChanger("home");
+var currentPage =  "Home";
+var historyStack = [];
+
+var pageDictionary = {
+
+	"Home" : pageChangeHome,
+	"Problems" : pageChangeProjects
+
+};
+
+function changePage(page) {
+	pageDictionary[page]();
+	historyStack.push(currentPage);
+	currentPage = page;
+}
 
 function pageChangeProjects() {
 
@@ -71,9 +105,6 @@ function pageChangeProjects() {
 
 	loadProblemList();
 	executeAnimationsLoading();
-
-
-
 
 	return false;
 }

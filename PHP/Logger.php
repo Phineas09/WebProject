@@ -1,31 +1,7 @@
 <?php
 
-
 class Logger
 {
-
-    private function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
-
-    private function createNewUser($name, $method, $id, $email, $password) {
-        $user = ORM::for_table('users')->create();
-        $user->name = $name;
-        $user->oauth = $method;
-        $user->oauthId = $id;
-        $user->email = strtolower($email);
-        $user->password = hash('sha256', $password);
-        $user->hash = hash('md5', $method . $name . $email);
-        $user->validated = 0;
-        $user->online = 0;
-        return $user;
-    }
 
     public function handler($_MyPost) {
 
@@ -35,16 +11,12 @@ class Logger
                 //require etc etc
                 // Create a new user object
 
-                $exists = ORM::for_table('users')->where('email', $_MyPost->email)->find_one();
+                $user = User::byEmail($_MyPost->email);
 
-                if($exists != false)
+                if(!$user->isGuest())
                     throw new Exception("Email already exists!");
 
-                $user = $this->createNewUser($_MyPost->name, "Default", "", $_MyPost->email, $_MyPost->password);
-                $user->validated = 0;
-                $user->save();
-
-                //Send validation email
+                $user = User::newUser($_MyPost->name, "Default", "", $_MyPost->email, $_MyPost->password);
 
                 echo json_encode(
                     array(
@@ -65,20 +37,10 @@ class Logger
 
             try {
 
-                $user = ORM::for_table('users')
-                    ->where(array(
-                        'email' => strtolower($_MyPost->email),
-                        'password' => hash('sha256', $_MyPost->password)
-                    ))
-                    ->find_one();
+                $user = User::matchAccount($_MyPost->email, $_MyPost->password);    
 
-                if($user == false)
+                if($user->isGuest())
                     throw new Exception("Email or password do not match");
-
-                $user->online = 1;
-                setcookie("LoggedUser", $user->hash, time()+3600, "/");
-                $_SESSION["Logged"] = "true";
-                $user->save();
 
                 echo json_encode(
                     array(
@@ -97,8 +59,6 @@ class Logger
 
         if(isset($_MyPost->oauth)) {
 
-            //Register or login from Facebook or Google +
-
             if (isset($_SESSION['Logged']))
             {
                 echo json_encode(
@@ -107,36 +67,18 @@ class Logger
                     ));
                 exit;
             }
-
             try {
-
-                $exists = ORM::for_table('users')
-                    ->where(array(
-                        'oauth' => $_MyPost->method,
-                        'oauthId' => $_MyPost->oauthId
-                    ))
-                    ->find_one();
-
-                if($exists != false) {
-                    $exists->online = 1;
-                    $exists->save();
-
-                    setcookie("LoggedUser", $exists->hash, time()+3600, "/");
-                    $_SESSION["Logged"] = "true";
+                $user = User::matchAccount("", "", $_MyPost->oauthId, $_MyPost->method);    
+                if(!$user->isGuest()) {
                     echo json_encode(
                         array(
                             'statusCode' => 200
                         ));
                     exit;
                 }
-
-                $user = $this->createNewUser($_MyPost->name, $_MyPost->method, $_MyPost->oauthId, $_MyPost->email, $this->generateRandomString(15));
-                $user->validated = 1;
-                $user->online = 1;
-                $user->save();
-
-                setcookie("LoggedUser", $user->hash, time()+3600, "/");
-                $_SESSION["Logged"] = "true";
+                $user = User::newUser($_MyPost->name, $_MyPost->method, $_MyPost->oauthId, $_MyPost->email, "", false);
+                $user->login();
+                $user->validateAccount();
                 echo json_encode(
                     array(
                         'statusCode' => 200
@@ -157,19 +99,13 @@ class Logger
 
             try {
                 if (isset($_COOKIE['LoggedUser'])) {
-                    $_SESSION["Logged"] = "true";
 
-                    $user = ORM::for_table('users')
-                        ->where(array(
-                            'hash' => $_COOKIE['LoggedUser']
-                        ))
-                        ->find_one();
+                    $user = new User();
 
-                    if($user == false)
+                    if($user->isGuest())
                         throw new Exception("Cookie is corrupted");
 
-                    $user->online = 1;
-                    $user->save();
+                    $user->login();
 
                     echo json_encode(
                         array(
@@ -183,15 +119,13 @@ class Logger
                 }
             }
             catch (Exception $e) {
-                unset($_COOKIE['LoggedUser']);
-                setcookie('LoggedUser', null, -1, '/');
+                User::wipeLoginCookies();
                 echo json_encode(
                     array(
                         'statusCode' => 412,
                         'Caught exception: ' => $e->getMessage()
                     ));
             }
-
             exit;
         }
 
@@ -200,22 +134,17 @@ class Logger
             try {
                 if (isset($_COOKIE['LoggedUser']) && isset($_SESSION['Logged'])) {
 
-                    $user = ORM::for_table('users')
-                        ->where(array(
-                            'hash' => $_COOKIE['LoggedUser']
-                        ))
-                        ->find_one();
+                    $user = new User();
 
-                    if($user == false)
+                    if($user->isGuest())
                         throw new Exception("Cookie is corrupted");
-
-                    $user->online = 0;
-                    $user->save();
+                    
+                    $user->setStatusOffline();
 
                     echo json_encode(
                         array(
                             'statusCode' => 200,
-                            'oauth' => $user->oauth
+                            'oauth' => $user->getOauth()
                         ));
                 } else {
                     echo json_encode(
@@ -225,12 +154,7 @@ class Logger
                 }
             }
             catch (Exception $e) {
-
-                unset($_COOKIE['LoggedUser']);
-                setcookie('LoggedUser', null, -1, '/');
-                //Uset Session variable
-                unset($_SESSION["Logged"]);
-
+                User::wipeLoginCookies();
                 echo json_encode(
                     array(
                         'statusCode' => 412,
@@ -239,13 +163,8 @@ class Logger
                 exit;
             }
             if( $_MyPost->logOutOnClose == "false" ) { //only execute when deliberate logout
-                //Unset Cookie
-                unset($_COOKIE['LoggedUser']);
-                setcookie('LoggedUser', null, -1, '/');
-                //Uset Session variable
-                unset($_SESSION["Logged"]);
+                User::wipeLoginCookies();
             }
-
             exit;
         }
 
@@ -253,23 +172,12 @@ class Logger
 
             try {
 
-                $user = ORM::for_table('users')
-                    ->where(array(
-                        'email' => strtolower($_MyPost->email)
-                    ))
-                    ->find_one();
+                $user = User::byEmail($_MyPost->email);
 
-                if($user == false)
+                if($user->isGuest())
                     throw new Exception("Email or password do not match");
 
-                //send new password via smt
-
-                $newPassword = $this->generateRandomString(15);
-                $user->password = hash('sha256', $newPassword);
-
-                sendNewPassword($newPassword, $user->name, $user->email);
-
-                $user->save();
+                $user->generateSendNewPassword();    
 
                 echo json_encode(
                     array(
