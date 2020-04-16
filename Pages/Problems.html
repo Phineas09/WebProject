@@ -1,0 +1,36 @@
+   
+   
+   
+   <div class="project-header">
+        <div class="content-container">
+
+            <section>
+                <div class="problems-navigation">
+                    
+                    <h1>Problems</h1>
+                    <div class="problemsSearchBarDiv">
+                        <input onfocus="this.value = '';" 
+                        oninput="searchProblemsSort(this.value)" type="text" name="search" 
+                        class="problemsSearchBar" placeholder="Search..">
+                    </div>
+                </div>
+                <p>Improve your skills by training with some real code challenges.</p>
+            </section>
+        </div> 
+    </div>
+
+    <div class="project-options-container">
+
+        <div class="projectSortByDiv">	
+            <label for="projectSortBy">Sort By:</label>
+            <select id="sortBySelector" onchange="loadProblemList(this.options[this.selectedIndex].text, 'asc')" id="projectsSortBy">
+            <option value="name">Name</option>
+            <option value="author">Author</option>
+            <option value="difficulty">Difficulty</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="project-list" id="project-list">  
+    </div>

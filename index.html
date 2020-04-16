@@ -1,0 +1,212 @@
+<!doctype html>
+<html id="mainHtml">
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	
+	<link rel="stylesheet"	href="./CSS/Themes.css">
+	<link rel="stylesheet"  href="./CSS/Login.css">
+	<link rel="stylesheet"  href="./CSS/Style.css">
+	<link rel="stylesheet"  href="./CSS/Container.css">
+	<link rel="stylesheet"  href="./CSS/Projects.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<meta charset="utf-8">
+	<title>MTArena Coding Challanges</title>
+	<script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js"
+      data-auto-a11y="true"
+			
+    ></script>
+	
+	
+	<!--
+	https://github.com/j4mie/idiorm
+	https://github.com/PHPMailer/PHPMailer
+
+-->
+</head>
+
+<body id="body">
+		<div id="navbarHeader" class="navbarHeader">
+			<h1 id="logo" onclick="pageChangeHome(); return false" class="logo">MTARENA</h1>
+			<input type="checkbox" onClick="makeBlurry()" id="nav-toggle" class="nav-toggle">
+
+			<nav id="navbar">
+				<ul id="navbar-ul">
+					<li><a>   </a></li>
+					<li><a href="#" onclick="pageChangeProjects(); return false">Problems</a></li>			
+					<li><a href="#" onclick="facebookLogout(); return false">Forum</a></li>			
+					<li><a href="#" onclick="googleLogout(); return false">Contact</a></li>			
+					<li><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
+				</ul>
+			</nav>
+
+			<label id="nav-toggle-label" for="nav-toggle" class="nav-toggle-label">
+				<span></span>
+			</label>
+		</div>
+	
+	<div class="container" id="container">
+			<div class="form-container sign-up-container" >
+				<form name="SignInForm" onSubmit="return sendSignUp(this);">
+				<a  onClick="popUpLogin(); return false" class="close-button"><i class="fas fa-times"></i></a>
+					<h1>Create Account</h1>
+					<div class="social-container">
+						<a href="#" onClick="facebookLogin(); return false" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" onClick="googlePlusLogin(); return false" class="social"><i class="fab fa-google-plus-g"></i></a>
+					</div>
+					<span>Use your email for registration</span>
+					<input type="text" autocomplete="off" name="name" placeholder="Name" required/>
+					<input type="email" autocomplete="off" name="email" placeholder="Email" required/>
+					<div id="emailSignUpError" class="error-message"></div>
+					<input type="password" minlength="8" name="password" placeholder="Password"  required/>
+					<div id="signUpSuccess" class="info-message">Your account has been created successfully!</div>
+					<button type="submit" name="register">Sign Up</button>
+					<button id="sign-In" class="hidden-button">Sign In</button>
+				</form>
+			</div>
+			<div class="form-container sign-in-container">
+				<form id="SignUpForm" name="SignUpForm" onSubmit="return sendSignIn(this);">
+				<a  onClick="popUpLogin(); return false" class="close-button"><i class="fas fa-times"></i></a>
+					<h1>Sign in</h1>
+					<div class="social-container">
+						<a href="#" onClick="facebookLogin(); return false" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" onClick="googlePlusLogin(); return false" class="social"><i class="fab fa-google-plus-g"></i></a>
+					</div>
+					<span>Use your account</span>
+					<input type="email" autocomplete="off" name="email" placeholder="Email" required/>
+					<div id="forgotPasswordMessageBox"></div>
+					<input type="password" minlength="8" name="password" placeholder="Password"  required/>
+					<div id="signInMessageBox"></div>
+					<a id="forgotPassword" href="#">Forgot your password?</a>
+					<button type="submit" name="login">Sign In</button>
+					<button id="sign-Up" class="hidden-button">Sign Up</button>
+				</form>
+			</div>	
+			<div class="overlay-container">
+				<div class="overlay">
+					<div class="overlay-panel overlay-left">
+
+						<h1>Welcome Back!</h1>
+						<p>
+							To keep connected with us please login with your personal info
+						</p>
+						<button class="ghost" id="signIn">Sign In</button>
+					</div>
+					<div class="overlay-panel overlay-right">
+						<a class="close-button" onClick="popUpLogin(); return false"><i class="fas fa-times"></i></a>	
+						<h1>Hello!</h1>
+						<p>Enter your personal details and start journey with us</p>
+						<button class="ghost" id="signUp">Sign Up</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+<div id="page-container">
+	<div id="content" value="homePage" class="content">
+		<div id="contentContainerScroll" class="content-container fill-screen-no-scroll">
+
+			<section id="home-content-container-section">
+				<img src="Images/home_desktop_programmer.svg" ondragstart="return false" alt="Programming image" class="programmer selectDisable">
+
+				<h1>Achieve mastery through challanges</h1>
+				<p class="subhead">Improve your skills by training with others on real code challenges.</p>
+
+				<!-- img src="Images/scroll.svg" alt="scroll down" class="scroll hide-mobile show-desktop"> -->
+			</section>
+    	</div>
+		
+		<div class="green-container">
+			<div class="content-container">
+				<ul>
+					<li class="module-left">
+						<img src="Images/home_image2.svg" alt="icon" ondragstart="return false" class="selectDisable">
+						<p class="green-container-title">Sharpen your skills</p>
+						<p>Challenge yourself with the problems created by the community to strengthen different skills. Master your current language of choice, or expand your understanding of a new one.</p>
+					</li>
+					<li class="module-middle">
+						<img src="Images/home_image1.svg" alt="icon" ondragstart="return false" class="selectDisable">
+						<p class="green-container-title">Earn ranks and honor</p>
+						<p>Problems are ranked to approximate difficulty. As you complete higher ranked problems, you will receive more points and more relevant problems.</p>		
+					</li>	
+					<li class="module-right">
+						<img src="Images/home_image3.svg" alt="icon" ondragstart="return false" class="selectDisable">
+						<p class="green-container-title">Create your own problems</p>
+						<p>Create problems that focus on your interests and train specific skillsets. Challenge the community with your insight and code understanding.</p>	
+					</li>
+				</ul>
+			</div>
+    	</div>
+		
+		<div class="gray-container">
+			<div class="content-container">
+				<ul>
+					<li class="module-middle gray-item1">
+						<figcaption class="green-container-title">How MTArena works ?</figcaption>	
+					</li>
+					<li class="module-middle gray-item2">
+						<figure>
+							<img src="Images/home_presentation1.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Choose a language to master</figcaption>
+							<blockquote>Object oriented, functional, popular, emerging, or just plain obscure. Choose whaterever you want, we will have something for you!</blockquote>
+						</figure>
+					</li>
+					
+					<li class="module-middle gray-item3">
+						<figure>
+							<img src="Images/home_presentation2.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Complete a coding challenge on your computer</figcaption>
+							<blockquote>All the coding happens on your machine in an environment you're familiar with. Download the problem, solve it, then upload your solution.</blockquote>
+						</figure>
+					</li>
+					
+					<li class="module-middle gray-item4">
+						<figure>
+							<img src="Images/home_presentation3.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Upload your solution and review it</figcaption>
+							<blockquote>Discussing code is one of the best ways to learn. Our friendly community will comment on your solutions online, introducing you to new ideas and techniques.</blockquote>
+						</figure>
+					</li>
+					
+				</ul>
+			</div>
+	    </div>	
+			
+		<div style="height: 200px" class="content-container">
+			<h2>Start coding right now!</h2>
+			<a id="getStartedButton" href="" onclick="popUpLogin(); return false" class="getStartedButton" >Get Started</a>
+		</div>	
+
+	</div>
+
+	<footer id="footer">
+        <div class="footer-container">
+            <div class="content-container">
+                <a href="" onClick="return false">
+                    <img src="Images/" class="logo" alt="logo">
+                </a>
+                <p class="address">MTArena<br><br>Romania</p>
+                <ul class="footer-links">
+                    <li><a href="" onClick="return false">Terms of Service</a></li>
+                    <li><a href="" onClick="return false">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+		<div class="after-footer-container">
+			<div class="content-container">
+			</div>
+		</div>
+    </footer>
+</div>	
+	
+		<script src="./JS/Login.js"></script>	
+		<script src="./JS/Profile.js"></script>	
+		<script src="./JS/Scripts.js"></script>
+		<script src="./JS/PageChanger.js"></script>	
+	
+		<script src="https://apis.google.com/js/client:platform.js?onload=onLoadGoogleCallback" async defer></script>	
+	
+</body>
+</html>
