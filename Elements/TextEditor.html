@@ -1,0 +1,84 @@
+<div class="textEditorOptions hiddenEditorOptions">
+    <button onclick='execCmd("bold", this);'><i class="fas fa-bold"></i></button>
+    <button onclick='execCmd("italic", this);'><i class="fas fa-italic"></i></button>
+    <button onclick='execCmd("underline", this);'><i class="fas fa-underline"></i></button>
+    <button onclick='execCmd("strikeThrough", this);'><i class="fas fa-strikethrough"></i></button>
+    <button onclick='execCmd("justifyLeft", this);'><i class="fas fa-align-left"></i></button>
+    <button onclick='execCmd("justifyCenter", this);'><i class="fas fa-align-center"></i></button>
+    <button onclick='execCmd("justifyRight", this);'><i class="fas fa-align-right"></i></button>
+    <button onclick='execCmd("justifyFull", this);'><i class="fas fa-align-justify"></i></button>
+    <button onclick='execCmd("cut", this);'><i class="fas fa-cut"></i></button>
+    <button onclick='execCmd("copy", this);'><i class="fas fa-copy"></i></button>
+    <button onclick='execCmd("indent", this);'><i class="fas fa-indent"></i></button>
+    <button onclick='execCmd("outdent", this);'><i class="fas fa-outdent"></i></button>
+    <button onclick='execCmd("subscript", this);'><i class="fas fa-subscript"></i></button>
+    <button onclick='execCmd("superscript", this);'><i class="fas fa-superscript"></i></button>
+    <button onclick='execCmd("undo", this);'><i class="fas fa-undo"></i></button>
+    <button onclick='execCmd("redo", this);'><i class="fas fa-redo"></i></button>
+    <button onclick='execCmd("insertUnorderedList", this);'><i class="fas fa-list-ul"></i></button>
+    <button onclick='execCmd("insertOrderedList", this);'><i class="fas fa-list-ol"></i></button>
+    <button onclick='execCmd("insertParagraph", this);'><i class="fas fa-paragraph"></i></button>
+    <button onclick='execCommandWithArg("insertImage", prompt("Enter the image URL", ""), this);'><i class="fas fa-image"></i></button>
+
+    <select onclick='execCommandWithArg("formatBlock", this.options[this.selectedIndex].value, this)'>
+        <option value="H1">H1</option>
+        <option value="H2">H2</option>
+        <option value="H3">H3</option>
+        <option value="H4">H4</option>
+        <option value="H5">H5</option>
+        <option value="H6">H6</option>
+    </select>
+    <button onclick='execCmd("insertHorizontalRule", this);'>HA</button>
+    <button onclick='execCommandWithArg("createLink", prompt("Enter a URL", "http://"), this);'><i class="fas fa-link"></i></button>
+    <button onclick='execCmd("unlink", this);'><i class="fas fa-unlink"></i></button>
+
+    <button onclick='execCmdToggleCode(this);'><i class="fas fa-code"></i></button>
+
+    <select onclick='execCommandWithArg("fontName", this.options[this.selectedIndex].value, this)'>
+        <option value="Arial">Arial</option>
+        <option value="Comic Sans M5">Comic Sans</option>
+        <option value="Courier">Courier</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Time New Roman">Time New</option>
+        <option value="Verdana">Verdana</option>
+    </select>
+    <select onclick='execCommandWithArg("fontSize", this.options[this.selectedIndex].value, this)'>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+    </select>
+    <p>Color:</p><input onchange='execCommandWithArg("foreColor", this.value, this)' type="color"/>
+
+</div>
+
+<iframe id="richTextFieldID"  name="richTextField" class="richEditorIframe" scrolling="no">
+</iframe>
+
+
+<div class="more-container">
+    <div class="more">
+        <button id="more-btn" onclick="showMenu(this)" class="more-btn">
+            <span class="more-dot"></span>
+            <span class="more-dot"></span>
+            <span class="more-dot"></span>
+        </button>
+        <div class="more-menu">
+                <div class="more-menu-caret">
+                <div class="more-menu-caret-outer"></div>
+                <div class="more-menu-caret-inner"></div>
+            </div>
+            <ul class="more-menu-items" tabindex="-1" role="menu" aria-labelledby="more-btn" aria-hidden="true">
+                <li class="more-menu-item" role="presentation">
+                    <button type="button" class="more-menu-btn" onclick="openiFrame(this.parentElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling.id);" role="menuitem">Edit</button>
+                </li>
+                <li class="more-menu-item" role="presentation">
+                    <button type="button" class="more-menu-btn" onclick="deleteiFrame(this.parentElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling);" role="menuitem">Delete</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

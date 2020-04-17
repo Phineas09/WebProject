@@ -4,7 +4,8 @@
     overflow: visible;
 
     border: none;
-    margin-bottom: 1em;
+    margin-bottom: 0.1rem;
+    margin-top: 0.3rem;
     border: 0.15em solid var(--themePrimary);
     
 }
@@ -18,12 +19,13 @@
 }  
 
 .textEditor {
+    position: relative;
     height: 100%;
     padding-left: 1em;
     padding-right: 1em;
 }
 
-.textEditor button {	
+.textEditor .textEditorOptions button {	
     outline: none;
     border: none;
     background: transparent;
@@ -36,7 +38,7 @@
     margin-bottom: 0.5rem;
 }
 
-.textEditor button:hover {
+.textEditor .textEditorOptions button:hover {
     color: var(--themePrimary);
 }
 
@@ -132,16 +134,179 @@
 }
 
 
+.textEditorAddCell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+
+.textEditorAddCell:hover {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.textEditorAddCell hr {
+    background-color: var(--textColor);
+    width: 200px;
+}
+
+.textEditorAddCell .textEditorAddCellButtons {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.textEditorAddCell .textEditorAddCellButtons button {
+    background-color: white;
+    outline: none;
+    border: 1px solid var(--textEditor);
+    border-radius: 5px;
+    color: var(--textEditor);
+    transform: translateY(5px);
+    transition: all 0.3s ease-in-out;
+    font-family: 'Roboto Slab', serif;	
+}
+
+.textEditorAddCell:hover .textEditorAddCellButtons button {
+    letter-spacing: 1px;
+    margin-left: 0.5rem;
+    transform: translateY(0px);
+    transition: all 0.3s ease-in-out;
+}
+
+.textEditorAddCell:hover .textEditorAddCellButtons button:active {
+    transform: scale(0.9);
+    transition: all 0.1s ease-in-out;
+}
 
 
 
 
+/*
+    More button style
+*/
+
+.more-container {
+    position: absolute;
+    top: 1em;
+    right: -0.5em;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Roboto Slab', serif !important;	
+
+}
+
+.more-btn,
+.more-menu-btn  {
+    background: none;
+    border: 0 none;
+    line-height: normal;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    font-size: 0.9em;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px 20px;
+    font-family: 'Roboto Slab', serif;
+}
+
+.more-dot {
+    background-color: #aab8c2;
+    margin: 0 auto;
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 1px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.more-menu {
+    height: fit-content;
+    position: absolute;
+    top: 100%;
+    z-index: 900;
+    right: 0;
+    padding: 10px 0;
+    margin-top: 9px;
+    background-color: #fff;
+    border: 1px solid #ccd8e0;
+    border-radius: 4px;
+    opacity: 0;
+    transform: translate(0, 15px) scale(.95);
+    transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+    pointer-events: none;
+}
+
+.more-menu-caret {
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    width: 18px;
+    height: 10px;
+    float: left;
+    overflow: hidden;
+}
+
+.more-menu-caret-outer,
+.more-menu-caret-inner {
+    position: absolute;
+    display: inline-block;
+    margin-left: -1px;
+    font-size: 0;
+    line-height: 1;
+}
+
+.more-menu-caret-outer {
+    border-bottom: 10px solid #c1d0da;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    height: auto;
+    left: 0;
+    top: 0;
+    width: auto;    
+}
+
+.more-menu-caret-inner {
+    top: 1px;
+    left: 1px;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid #fff;
+}
+
+.more-menu-items {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+}
+
+.more-menu-item {
+    display: block;
+}
 
 
+.more-menu-item:hover .more-menu-btn {
+    color: var(--themeSecondary);
+}
 
+.more-btn:hover .more-dot,
+.show-more-menu .more-dot {
+    background-color: #516471;
+}
 
-
-
-
+.show-more-menu .more-menu {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    pointer-events: auto;
+}
 
 

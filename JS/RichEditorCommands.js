@@ -11,21 +11,34 @@ function iFramePipeReceive(event) {
     `${event.data.frameHeight+30}px`);
 
     if(event.data.hasOwnProperty("frameElement")) {
-        var iFrame = document.getElementById(event.data.frameElement);
-
-        if(activeiFrame) {
-            closeiFrame();
-        }
-        activeiFrame = iFrame;
-        
-        window.ondblclick = closeiFrame;
-
-        activateTextEditor(iFrame);
-        iFrame.contentWindow.window.postMessage({
-            active: true
-        }, '*');
+        openiFrame(event.data.frameElement);
     }
 }
+
+function openiFrame(frameElement) {
+    var iFrame = document.getElementById(frameElement);
+
+    if(activeiFrame) {
+        closeiFrame();
+    }
+    activeiFrame = iFrame;
+    
+    window.ondblclick = closeiFrame;
+
+    activateTextEditor(iFrame);
+    iFrame.contentWindow.window.postMessage({
+        active: true
+    }, '*');
+}
+
+function deleteiFrame(frameElement) {
+    var editorContainer = frameElement.parentElement;
+    var editorAddCell = editorContainer.nextElementSibling;
+    var content = editorContainer.parentElement;
+    content.removeChild(editorContainer);
+    content.removeChild(editorAddCell);
+}
+
 
 function closeiFrame() {
 
@@ -57,7 +70,7 @@ function formatiFrames() {
         if(!iframe.getAttribute("formatted") && iframe.name === "richTextField"){ 
             iframe.setAttribute("formatted", "true");
 
-            iframe.contentDocument.getElementsByTagName("body")[0].innerHTML = defaultTextShow;
+            iframe.contentDocument.getElementsByTagName("body")[0].innerHTML = iframe.id +  defaultTextShow;
 
             var script   = document.createElement("script");
             script.type  = "text/javascript";
@@ -76,26 +89,28 @@ function formatiFrames() {
 function activateTextEditor(element) {
     element.contentDocument.designMode = "on";
     element.classList.add("selectediFrame");
-    element.parentElement.childNodes[1].classList.remove("hiddenEditorOptions");
+    element.previousElementSibling.classList.remove("hiddenEditorOptions");
+    element.nextElementSibling.classList.add("hiddenEditorOptions");
 }
 
 function closeTextEditor(element) {
     element.contentDocument.designMode = "off";
     element.classList.remove("selectediFrame");
-    element.parentElement.childNodes[1].classList.add("hiddenEditorOptions");
+    element.previousElementSibling.classList.add("hiddenEditorOptions");
+    element.nextElementSibling.classList.remove("hiddenEditorOptions");
 }
 
 // ! Get iframe contents 
 //console.log(textField.contentDocument.getElementsByTagName("body")[0].innerHTML);
 
 function execCmd (command, element) {
-    var textField = element.parentElement.parentElement.childNodes[3];
+    var textField = element.parentElement.nextElementSibling;
     textField.contentDocument.execCommand(command, false, null);
 }
 
 function execCmdToggleCode(element) {
 
-    var textField = element.parentElement.parentElement.childNodes[3];
+    var textField = element.parentElement.nextElementSibling;
 
     //! This does not work fore some reason, therefore i removed the margin of code styled div
     textField.contentDocument.execCommand("insertBrOnReturn", false, null);
@@ -112,7 +127,7 @@ function execCmdToggleCode(element) {
 }
 
 function execCommandWithArg(command, arg, element) {
-    var textField = element.parentElement.parentElement.childNodes[3];
+    var textField = element.parentElement.nextElementSibling;
     if(command == "foreColor") {
         arg = arg.substr(1);
     }
@@ -121,9 +136,97 @@ function execCommandWithArg(command, arg, element) {
 }
 
 function showSource(element) {
-    var textField = element.parentElement.childNodes[3];
+    var textField = element.nextElementSibling;
     //document.getElementById("textEditor").innerHTML = textField.contentDocument.getElementsByTagName("body")[0].innerHTML;
     console.log(textField.contentDocument.getElementsByTagName("body")[0].innerHTML);
 
 }
+
+//! More buttons
+
+var visible = false;
+var currentButton = null;
+
+function showMenu(button) {
+    if (!visible) {
+        currentButton = button;
+        visible = true;
+        button.parentElement.classList.add('show-more-menu');
+        button.nextElementSibling.setAttribute('aria-hidden', false);
+        document.addEventListener('mousedown', hideMenu, false);
+    }
+}
+
+function hideMenu(e) {
+    if (currentButton && currentButton.parentElement.contains(e.target)) {
+        return;
+    }
+    if (visible) {
+        visible = false;
+        currentButton.parentElement.classList.remove('show-more-menu');
+        currentButton.nextElementSibling.setAttribute('aria-hidden', true);
+        document.removeEventListener('mousedown', hideMenu);
+        currentButton = null;
+    }
+}
+
+
+
+//! Render functions part !@#!@
+
+
+function renderElementAddToDom(parentElement, elementClass, innerHTML) {
+
+    var element = document.createElement("div");
+    element.classList.add(elementClass);
+    element.innerHTML = innerHTML;
+
+    if(!parentElement.nextElementSibling) {
+        parentElement.parentElement.appendChild(element);
+    }
+    else {
+        parentElement.parentElement.insertBefore(element, parentElement.nextElementSibling);
+    }
+    if(elementClass === "textEditor") {
+        setTimeout(function () {
+            formatiFrames();
+        }, 100);
+        renderNode(element, "textEditorAddCell");
+    }
+}
+
+
+function maskElementPassing(requestResponse, parentElement, elementClass) {
+    if(requestResponse.readyState == 4 && requestResponse.status == 200) {
+
+        var response = JSON.parse(requestResponse.responseText);
+        if(response.statusCode == 200) {
+
+            renderElementAddToDom(parentElement, elementClass, response.elementInner);
+        }
+    }
+}
+
+function renderNode(parentElement, nodeClass) {
+
+    makeHttpRequest( function() {
+        maskElementPassing(this, parentElement, nodeClass); },
+    {
+        "renderElement" : true,
+        "element" : nodeClass
+    }
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
 

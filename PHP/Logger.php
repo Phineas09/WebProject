@@ -165,6 +165,10 @@ class Logger
             if( $_MyPost->logOutOnClose == "false" ) { //only execute when deliberate logout
                 User::wipeLoginCookies();
             }
+
+            //! Destroy session here maybe ?
+
+            //? session_destroy();
             exit;
         }
 

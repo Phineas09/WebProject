@@ -8,13 +8,16 @@
     require_once("./PageChanger.php");
     require_once("./ProblemsManager.php");
     require_once('./User.php');
+    require_once('./Render.php');
 
 
 	ORM::configure('mysql:host=localhost;dbname=mtarena');
 	ORM::configure('username', 'testServer');
 	ORM::configure('password', '0GFCZeZSmOdJ5Oaj');
 
-    session_start();
+    if(session_id() == '') {
+        session_start();
+    }
 
     $problemManager = new ProblemsManager();
 
@@ -197,9 +200,39 @@
             exit;
         }
 
-
-
     }
+
+
+    //! Render elements ?
+
+    if(isset($_MyPost->renderElement)) {
+        try {
+            $element = Render::renderElement($_MyPost->element);
+            echo json_encode(
+                array(
+                    'statusCode' => 200,
+                    'elementInner' => $element
+                ));
+        } 
+        catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'statusCode' => 404,
+                    'Caught exception: ' => $e->getMessage()
+                ));
+        }
+        exit;
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
