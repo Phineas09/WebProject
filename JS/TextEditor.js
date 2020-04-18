@@ -50,27 +50,13 @@ function closeiFrame() {
     activeiFrame = null;
 }
 
-/*
-window.onload = function() {
-    var iframes = document.getElementsByTagName('iframe');
-    for (var i = 0, len = iframes.length, doc; i < len; ++i) {
-        doc = iframes[i].contentDocument || iframes[i].contentWindow.document;
-        //doc = iframes[i].contentDocument;
-        console.log(doc);
-        doc.designMode = "on";
-    }
-};
-*/
-
-var defaultTextShow = '<div style="text-align: center;">Enter Text Here</div>';
-
 function formatiFrames() {
     var iframes = document.getElementsByTagName('iframe');
     for(let iframe of iframes) {
         if(!iframe.getAttribute("formatted") && iframe.name === "richTextField"){ 
             iframe.setAttribute("formatted", "true");
 
-            iframe.contentDocument.getElementsByTagName("body")[0].innerHTML = iframe.id +  defaultTextShow;
+            iframe.contentDocument.getElementsByTagName("body")[0].innerHTML = iframe.id +   '<div style="text-align: center;">Enter Text Here</div>';
 
             var script   = document.createElement("script");
             script.type  = "text/javascript";
@@ -170,10 +156,7 @@ function hideMenu(e) {
     }
 }
 
-
-
 //! Render functions part !@#!@
-
 
 function renderElementAddToDom(parentElement, elementClass, innerHTML) {
 
@@ -194,7 +177,6 @@ function renderElementAddToDom(parentElement, elementClass, innerHTML) {
         renderNode(element, "textEditorAddCell");
     }
 }
-
 
 function maskElementPassing(requestResponse, parentElement, elementClass) {
     if(requestResponse.readyState == 4 && requestResponse.status == 200) {
