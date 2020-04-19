@@ -1,8 +1,9 @@
-window.onload = () => {formatiFrames();}
+window.onload = () => {formatEditorElements();}
 
 window.onmessage = iFramePipeReceive;
 
 var activeiFrame = null;
+var activeDraw = null;
 
 function iFramePipeReceive(event) {
 
@@ -13,6 +14,10 @@ function iFramePipeReceive(event) {
     if(event.data.hasOwnProperty("frameElement")) {
         openiFrame(event.data.frameElement);
     }
+
+    if(event.data.hasOwnProperty("canvasElement")) {
+        enableDraw(document.getElementById(event.data.canvasElement));
+    }
 }
 
 function openiFrame(frameElement) {
@@ -21,14 +26,33 @@ function openiFrame(frameElement) {
     if(activeiFrame) {
         closeiFrame();
     }
+    
+    if(activeDraw) {
+        activeDraw.paint.unBind();
+    }
+
     activeiFrame = iFrame;
     
-    window.ondblclick = closeiFrame;
+    window.ondblclick = closeActiveElement;
 
     activateTextEditor(iFrame);
     iFrame.contentWindow.window.postMessage({
         active: true
     }, '*');
+}
+
+function closeActiveElement(event) {
+    //Close any active elements
+    if(activeDraw) {
+        if (activeDraw !== event.target) {  
+            //If the dbclick was made outside a drawing close id  
+            activeDraw.paint.unBind();
+        }
+    }
+    //if dbclick was made outside iframe close it (clicks inside iframe are captured by the iFrame.js script inside each iframe)
+    if(activeiFrame) {
+        closeiFrame();
+    }
 }
 
 function deleteiFrame(frameElement) {
@@ -39,10 +63,8 @@ function deleteiFrame(frameElement) {
     content.removeChild(editorAddCell);
 }
 
-
 function closeiFrame() {
-
-    window.removeEventListener("ondblclick", closeiFrame);
+    window.removeEventListener("ondblclick", closeActiveElement);
     closeTextEditor(activeiFrame);
     activeiFrame.contentWindow.window.postMessage({
         inactive: true
@@ -70,6 +92,11 @@ function formatiFrames() {
             iframe.contentDocument.head.appendChild(cssLink);
         }
     }
+}
+
+function formatEditorElements() {
+    formatiFrames();
+    formatDrawElements();
 }
 
 function activateTextEditor(element) {
@@ -176,6 +203,11 @@ function renderElementAddToDom(parentElement, elementClass, innerHTML) {
         }, 100);
         renderNode(element, "textEditorAddCell");
     }
+
+    if(elementClass === "drawEditor") {
+        formatDrawElements();
+        renderNode(element, "textEditorAddCell");
+    }
 }
 
 function maskElementPassing(requestResponse, parentElement, elementClass) {
@@ -199,16 +231,4 @@ function renderNode(parentElement, nodeClass) {
     }
     );
 }
-
-
-
-
-
-
-
-
-
-
-
-
 

@@ -1,31 +1,60 @@
+function enableDraw(publisher) {
 
-var paint = new Paint(document.getElementById("drawCanvas"));
-paint.activeTool = "line";
-paint.lineWidth = 1;
-paint.selectedColor = "#000000";
-paint.init();
+    console.log("Enbled Drawing");
+    if(activeDraw) {
+        activeDraw.paint.unBind();
+    }
+
+    if(activeiFrame) {
+        closeiFrame();
+    }
+
+    activeDraw = publisher;
+    window.ondblclick = closeActiveElement;
+    activeDraw.paint.init();
+}
 
 function drawExecCmd(command, publisher, toolChange = null) {
-
     var target = publisher.parentElement.parentElement.nextElementSibling;
 
+    if(target.paint == null) {
+        target.paint = new Paint(target);
+        target.paint.activeTool = "line";
+        target.paint.lineWidth = 1;
+        target.paint.selectedColor = "#000000";
+        target.paint.init();
+    }
+
     if(command == "foreColor") {
-        paint.selectedColor = toolChange;
-        console.log(toolChange);
+        target.paint.selectedColor = toolChange;
         return;
     }
 
     if(toolChange) {
         if(toolChange == "linewidth") {
-            paint.lineWidth = command; 
+            target.paint.lineWidth = command; 
         }
         else {
-            paint.activeTool  = toolChange;
+            target.paint.activeTool  = toolChange;
         }
     }
 
-    drawEditorToolBoxActivate(publisher);
+    if(command == "undo") {
+        target.paint.undoPaint();
+    }
 
+    if(command == "downlaod") {
+
+        //! Work needs to be done here
+        
+        var image = target.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream");
+        var link = document.createElement("a");
+        link.download = "my-image.png";
+        link.href = image;
+        link.onclick = (e) => {return false;}; 
+        link.click();
+    }
+    drawEditorToolBoxActivate(publisher);
 }
 
 function toggleActiveElementFromDiv(targetDiv) {
@@ -56,10 +85,18 @@ function drawEditorToolBoxActivate(button) {
     button.classList.toggle("activeToolBoxElement");
 }
 
+function formatDrawElements() {
+    var canvases = document.getElementsByName('drawCanvas');
+    for(let canvas of canvases) {
+        if(canvas.paint == null) {
+            canvas.paint = new Paint(canvas);
+            canvas.paint.activeTool = "line";
+            canvas.paint.lineWidth = 1;
+            canvas.paint.selectedColor = "#000000";
+        }
+    }
+}
 
-
-
-
-
-
-
+function increaseDrawHeight(publisher, percent) {
+    publisher.parentElement.parentElement.nextElementSibling.paint.increaseHeight(percent);
+}

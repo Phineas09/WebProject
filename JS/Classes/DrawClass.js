@@ -10,18 +10,18 @@ const TOOL_ERASER = "eraser";
 
 class Paint {
 
-
     constructor(canvasElement) {
-
         this.canvas = canvasElement;
         this.context = this.canvas.getContext("2d");
-        //console.log(event.clientX, event.clientY);
         this.setCanvasScale();
+        this.undoStack = [];
+        
+        this.undoLimit = 3;
+        $('#' + this.canvas.id).dblclick(this.dbClickEvent.bind(this));
     }
 
     set activeTool(tool) {
         this.tool = tool;
-        console.log(this.tool);
     }
 
     set lineWidth(lineWidth) {
@@ -35,15 +35,20 @@ class Paint {
     }
  
     setCanvasScale() {
-        console.log("called");
 
         var savedData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        /*
+            this.canvas.width = this.canvas.height *(this.canvas.clientWidth / this.canvas.clientHeight);
+            this.canvas.height = this.canvas.width *(this.canvas.clientHeight / this.canvas.clientWidth);
+        */
+        var rect = this.canvas.getBoundingClientRect()
+        let scaleX = rect.width / this.canvas.width;
+        let scaleY = rect.height / this.canvas.height; 
+        this.canvas.width = this.canvas.width * scaleX;
+        this.canvas.height = this.canvas.height * scaleY;
 
-        this.canvas.width = this.canvas.height *(this.canvas.clientWidth / this.canvas.clientHeight);
         this.context.putImageData(savedData, 0, 0);
     };
-
-
 
     _getMouseCoordsCanvas(event) {
         var rect = this.canvas.getBoundingClientRect(),
@@ -57,12 +62,53 @@ class Paint {
     }
 
     init() {
-        this.canvas.onmousedown = (event) => this.onMouseDown(event);
+        console.log("Initi");
         window.onresize = () => this.setCanvasScale();
+        $('#' + this.canvas.id).off();
+        this.canvas.onmousedown = (event) => this.onMouseDown(event);
+        this.setCanvasScale();
+        this.canvas.classList.add("selectediFrame");
+        this.canvas.previousElementSibling.classList.remove("hiddenEditorOptions");
+        this.canvas.nextElementSibling.classList.add("hiddenEditorOptions");
+    }
+
+    dbClickEvent() {
+        console.log("Called DB Click");
+        var canvas = this.canvas;
+            window.postMessage({
+                canvasElement: canvas.id
+            }, '*');
+    }    
+    
+    increaseHeight(percent) {
+        let element = $('#' + this.canvas.id);
+        element.height(parseInt(element.height()) + percent);
+        this.setCanvasScale();
+
+    }
+
+    unBind() {
+        console.log("Unbinding");
+        this.canvas.onmousedown = null;
+        this.canvas.previousElementSibling.classList.add("hiddenEditorOptions");
+        activeDraw = null;
+
+        $('#' + this.canvas.id).dblclick(this.dbClickEvent.bind(this));
+        
+        window.removeEventListener("ondblclick", closeActiveElement);
+
+        this.canvas.classList.remove("selectediFrame");
+        this.canvas.previousElementSibling.classList.add("hiddenEditorOptions");
+        this.canvas.nextElementSibling.classList.remove("hiddenEditorOptions");
     }
 
     onMouseDown(event) {
         this.savedData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        if(this.undoStack.length >= this.undoLimit) {
+            this.undoStack.shift();
+        }
+        this.undoStack.push(this.savedData);
+
         this.canvas.onmousemove = (event) => this.onMouseMove(event);
 
         document.onmouseup = (event) => this.onMouseUp(event);
@@ -75,6 +121,10 @@ class Paint {
         }
         else if (this.tool == TOOL_PAINT) {
             new Fill(this.canvas, this._round(this.startPos), this.color);
+        }
+        else if (this.tool == TOOL_ERASER) {
+            this.context.clearRect(this.startPos.x, this.startPos.y,
+                this._lineWidth +5, this._lineWidth +5 );
         }
     }
 
@@ -97,7 +147,11 @@ class Paint {
                 break;
             case TOOL_BRUSH:
                 this.drawFreeLine(parseInt(this._lineWidth) + 5);
-                break;       
+                break;
+            case TOOL_ERASER:
+                this.context.clearRect(this.currentPos.x, this.currentPos.y,
+                this._lineWidth + 5, this._lineWidth + 5); 
+                break;
             default:
                 break;    
         }
@@ -143,6 +197,12 @@ class Paint {
         this.context.lineWidth = lineWidth;
         this.context.lineTo(this.currentPos.x, this.currentPos.y);
         this.context.stroke();
+    }
+
+    undoPaint() {
+        if(this.undoStack.length > 0) {
+            this.context.putImageData(this.undoStack.pop(), 0, 0);
+        }
     }
 
 };
@@ -240,15 +300,4 @@ class Fill {
         this.imageData.data[offset + 3] = fillColor[3];    
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 

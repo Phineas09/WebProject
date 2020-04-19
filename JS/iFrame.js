@@ -45,12 +45,11 @@ window.onclick = (event) => {
     console.log("aa");
     window.parent.postMessage({
         frameFocus: window.frameElement.id
-    }, '*');
+        }, '*');
 
-}
+    }
 */
 function postiFrameId () {
-    console.log("parent");
     window.parent.postMessage({
         frameElement: window.frameElement.id
     }, '*');

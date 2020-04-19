@@ -28,6 +28,11 @@ class Render {
         return $textEditor;
     }
 
+    static private function renderDrawEditor() {
+        $textEditor = str_replace("drawCanvasID", "drawCanvas" . strval(self::getiFrameNumber()), self::readElementToRender("DrawEditor"));
+        return $textEditor;
+    }
+
     static private function renderEditorAddCell() {
 
         $EditorAddCell = self::readElementToRender("EditorAddCell");
@@ -41,6 +46,9 @@ class Render {
         }
         if(strcmp ( $toRender, "textEditorAddCell") == 0) {
             return self::renderEditorAddCell();
+        }
+        if(strcmp ( $toRender, "drawEditor") == 0) {
+            return self::renderDrawEditor();
         }
     }
 

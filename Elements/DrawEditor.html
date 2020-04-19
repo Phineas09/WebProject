@@ -1,0 +1,95 @@
+<div class="drawToolbox hiddenEditorOptions">
+
+    <div class="group commands">
+
+        <button data-tool="command" onclick='increaseDrawHeight(this, 150);'><i class="fas fa-plus"></i></button>
+        <button data-tool="command" onclick='increaseDrawHeight(this, -150);'><i class="fas fa-minus"></i></button>
+            
+        <button data-tool="command" onclick='drawExecCmd("undo", this);'><i class="fas fa-undo"></i></button>
+        <button data-tool="command" onclick='drawExecCmd("downlaod", this);'><i class="fas fa-download"></i></button>
+    </div>
+
+    <div class="group shapes">
+        <button data-tool="regular" class="activeToolBoxElement" onclick='drawExecCmd("line", this, "line");'><i class="fas fa-minus"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("rectangle", this, "rectangle");'><i class="far fa-square"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("circle", this, "circle");'><i class="far fa-circle"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("triangle", this, "triangle");'><i class="fa fa-exclamation-triangle"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("pencil", this, "pencil");'><i class="fas fa-pencil-alt"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("brush", this, "brush");'><i class="fas fa-paint-brush"></i></button>
+        <button data-tool="regular" onclick='drawExecCmd("eraser", this, "eraser");'><i class="fas fa-eraser"></i></button>
+    </div>
+
+    <div class="group tools">
+        <button data-tool="optional" onclick='drawExecCmd("paint-bucket", this, "paint-bucket");'><i class="fas fa-fill"></i></button>
+    </div>
+
+    <div class="group linewidth">
+        <button class="activeToolBoxElement" onclick='drawExecCmd("1", this, "linewidth");'>
+            <div class="drawToolBoxLineWidthDiv">
+                <div class="drawToolboxLineWidth drawToolboxLineWidth1"></div>
+            </div>
+        </button>
+
+        <button onclick='drawExecCmd("3", this, "linewidth");'>
+            <div class="drawToolBoxLineWidthDiv">
+                <div class="drawToolboxLineWidth drawToolboxLineWidth3"></div>
+            </div>
+        </button>
+
+        <button onclick='drawExecCmd("5", this, "linewidth");'>
+            <div class="drawToolBoxLineWidthDiv">
+                <div class="drawToolboxLineWidth drawToolboxLineWidth5"></div>
+            </div>
+        </button>
+
+        <button onclick='drawExecCmd("10", this, "linewidth");'>
+            <div class="drawToolBoxLineWidthDiv">
+                <div class="drawToolboxLineWidth"></div>
+            </div>
+        </button>
+
+        <button onclick='drawExecCmd("15", this, "linewidth");'>
+            <div class="drawToolBoxLineWidthDiv">
+                <div class="drawToolboxLineWidth drawToolboxLineWidth15"></div>
+            </div>
+        </button>
+
+        <button>
+            <input autocomplete="off" onchange='drawExecCmd("foreColor", this.parentElement, this.value)' type="color"/>
+        </button>
+
+    </div>
+
+
+</div>
+
+<canvas id="drawCanvasID" name="drawCanvas" class="drawCanvas">
+</canvas>
+
+<div class="more-container">
+    <div class="more">
+        <button id="more-btn" onclick="showMenu(this)" class="more-btn">
+            <span class="more-dot"></span>
+            <span class="more-dot"></span>
+            <span class="more-dot"></span>
+        </button>
+        <div class="more-menu">
+                <div class="more-menu-caret">
+                <div class="more-menu-caret-outer"></div>
+                <div class="more-menu-caret-inner"></div>
+            </div>
+            <ul class="more-menu-items" tabindex="-1" role="menu" aria-labelledby="more-btn" aria-hidden="true">
+                <li class="more-menu-item" role="presentation">
+                    <button type="button" class="more-menu-btn" 
+                    onclick="enableDraw(this.parentElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling);" 
+                    role="menuitem">Edit</button>
+                </li>
+                <li class="more-menu-item" role="presentation">
+                    <button type="button" class="more-menu-btn" 
+                    onclick="deleteiFrame(this.parentElement.parentElement.parentElement.parentElement.parentElement.previousElementSibling);"
+                        role="menuitem">Delete</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

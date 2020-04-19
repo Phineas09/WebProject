@@ -55,7 +55,7 @@
 }
 
 .hiddenEditorOptions {
-    display: none;
+    display: none !important;
 }
 
 .textEditorOptions input {
@@ -336,7 +336,6 @@
 }
 
 .drawCanvas {
-
     width: 100%;
     height: 150px;
     position: relative;
