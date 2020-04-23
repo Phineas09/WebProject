@@ -153,15 +153,14 @@ $(window).scroll(function(event) {
 });
 
 
-function makeHttpRequest(onReadyFunction, stringData, link="/PHP/demo.php") {
+function makeHttpRequest(onReadyFunction, stringData, link="/PHP/demo.php", async = true) {
 	
 	var request = new XMLHttpRequest();
 
 	request.onreadystatechange = onReadyFunction;
 	
 	var data = JSON.stringify(stringData);
-
-	request.open('POST', link);
+	request.open('POST', link, async);
 	request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 	request.send(data);
 

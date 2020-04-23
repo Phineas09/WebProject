@@ -278,6 +278,16 @@
 		transition: opacity 0.4s ease-in-out;
 		z-index: 2;
 	}
+
+	/*
+		Close button error here !@#!
+	*/
+
+	.close-button {
+		top: 5%;
+		right: 2%;
+	}
+
 }
 
 @media screen and (max-width:720px) {

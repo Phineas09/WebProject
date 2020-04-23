@@ -46,12 +46,11 @@ function drawExecCmd(command, publisher, toolChange = null) {
     if(command == "downlaod") {
 
         //! Work needs to be done here
-        
         var image = target.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream");
         var link = document.createElement("a");
         link.download = "my-image.png";
         link.href = image;
-        link.onclick = (e) => {return false;}; 
+        //link.onclick = (e) => {return false;}; 
         link.click();
     }
     drawEditorToolBoxActivate(publisher);

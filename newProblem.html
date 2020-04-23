@@ -110,7 +110,7 @@
 	
 <div id="page-container">
 	<div id="content" class="content">
-        
+		
         <div class="project-header">
 			<div class="content-container">
 	
@@ -128,6 +128,7 @@
 			<input id="problem_Name" class="inputText" type="text" autocomplete="off" placeholder="Give your problem a name"/>
 
 		</div>
+
 		<!-- 
 			Drawing part, finally!
 		-->
@@ -343,7 +344,45 @@
 			<hr>
 		</div>
 
-    </div>   
+			<div class="project-header project-header-formatted ">
+				<div class="content-container">
+					<section>
+						<p>*Upload your test cases and solution!</p>
+						<form class="newProblemUpload" action="/action_page.php">
+							<label for="files">Source File:</label>
+							<input type="file" id="files" name="sourceFile"><br><br>
+							<label for="files">Test Cases:</label>
+							<input type="file" id="files" name="testFiles" multiple><br><br>
+						</form> 
+					</section>
+				</div> 
+			</div>
+		<div class="content-container">
+			<button class="submitNewProblemButton onclick="submitNewProblem(); return false"  >Submit Problem</button>
+		</div>
+
+	</div>  
+	
+	<footer id="footer">
+        <div class="footer-container">
+            <div class="content-container">
+                <a href="" onClick="return false">
+                    <img src="Images/" class="logo" alt="logo">
+                </a>
+                <p class="address">MTArena<br><br>Romania</p>
+                <ul class="footer-links">
+                    <li><a href="" onClick="return false">Terms of Service</a></li>
+                    <li><a href="" onClick="return false">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+		<div class="after-footer-container">
+			<div class="content-container">
+			</div>
+		</div>
+    </footer>
+
+
 </div>	
 	
 		<script src="./JS/Login.js"></script>	

@@ -41,15 +41,45 @@ class Render {
 
     static public function renderElement(string $toRender) {
 
-        if(strcmp ( $toRender, "textEditor") == 0) {
+        if(strcasecmp  ( $toRender, "textEditor") == 0) {
             return self::renderTextEditor();
         }
-        if(strcmp ( $toRender, "textEditorAddCell") == 0) {
+        if(strcasecmp  ( $toRender, "textEditorAddCell") == 0) {
             return self::renderEditorAddCell();
         }
-        if(strcmp ( $toRender, "drawEditor") == 0) {
+        if(strcasecmp  ( $toRender, "drawEditor") == 0) {
             return self::renderDrawEditor();
         }
+    }
+
+    static private function renderProfilePage($user) {
+
+        $profilePage = self::readElementToRender("ProfilePage");
+        //Format profile Page 
+        $profilePage = str_replace("ReplaceTitle", $user->getTitle(),$profilePage);
+        $profilePage = str_replace("ReplaceUsername", $user->getUsername(),$profilePage);
+        $profilePage = str_replace("ReplaceEmailAddress", $user->getEmailAddress(),$profilePage);
+        $profilePage = str_replace("ReplaceProfileImage", $user->getProfilePicture(),$profilePage);
+        $profilePage = str_replace("ReplaceFirstName", $user->getFirstName(),$profilePage);
+        $profilePage = str_replace("ReplaceLastName", $user->getLastName(),$profilePage);
+        $profilePage = str_replace("ReplaceAddress", $user->getAddress(),$profilePage);
+        $profilePage = str_replace("ReplacePhone", $user->getPhone(),$profilePage);
+        $profilePage = str_replace("ReplaceBirth", $user->getBirthDate(),$profilePage);
+        $profilePage = str_replace("ReplacePoints", $user->getUserPoints(),$profilePage);
+        $profilePage = str_replace("ReplaceSolved", $user->getNumberOfProblemsSolved(),$profilePage);
+        $profilePage = str_replace("ReplacePosted", $user->getNumberOfPublishedProblems(),$profilePage);
+
+        return $profilePage;
+    }
+
+
+    static public function renderPageContents($user, $pageName) {
+
+        if(strcasecmp  ( $pageName, "profilepage") == 0) {
+            return self::renderProfilePage($user);
+        }
+
+
     }
 
 

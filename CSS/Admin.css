@@ -1,0 +1,71 @@
+
+
+.adminNavigation {
+
+    position: absolute;
+    width: 3em;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.adminNavigation ul {
+    width: 100%;
+    margin-top: -25vh;
+    background-color: var(--themePrimary);
+    border-top-right-radius: 20%;
+    border-bottom-right-radius: 20%;
+}
+
+.adminNavigation ul button {
+    margin-top: 2em;
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    outline: none;
+    margin: 0 none;
+    color: white;
+    border: 0;
+    transition: all 0.2s ease-in-out;
+}
+
+.adminNavigationIconWrapped {
+    height: 3em;
+}
+
+.adminNavigation ul button:hover {
+    color: var(--themeSecondary);
+    transition: all 0.2s ease-in-out;
+}
+
+.usersOnline {
+    display: block;
+    height: 12em;
+}
+
+.usersOnline p:nth-child(2) {
+
+    text-align: center;
+    font-size: 1.7em;
+    color: var(--background);
+    font-weight: bold;
+}
+
+.chartTitle {
+    color: var(--themePrimary);
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+    transition: color 0.2s ease-in-out;
+    cursor: default;
+}
+
+.adminLineChart {
+    position: relative;
+    height: fit-content;
+    width: 100%;
+
+}
+

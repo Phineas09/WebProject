@@ -5,14 +5,13 @@
  * @return User 
  * @throws Exception 
  */
-
-
  
 class User {
 
     private $guest = null;
     private $user = null;
     private $privileges = null;
+    private $details = null;
 
     // ! Ctors
 
@@ -31,6 +30,7 @@ class User {
             $this->user = $user;
             $this->guest = false;
             $this->findPrivileges();
+            $this->findDetails();
         }
         else {
             $this->guest = true;
@@ -53,6 +53,7 @@ class User {
         $instance->user = $user;
         $instance->guest = false;
         $instance->findPrivileges();
+        $instance->findDetails();
 
         return $instance;
     }
@@ -64,6 +65,7 @@ class User {
         $instance->user->save();
         $instance->guest = false;
         $instance->createPrivileges();
+        $instance->createDetails();
 
         //if($sendEmail === true)
             //! Send verification email ?  
@@ -98,6 +100,7 @@ class User {
         $instance->user = $user;
         $instance->guest = false;
         $instance->findPrivileges();
+        $instance->findDetails();
         $instance->login();
         return $instance;        
     }
@@ -164,7 +167,7 @@ class User {
                             '<li><a href="#" onclick="pageChangeProjects(); return false">
                             <i class="fas fa-lock"></i> Admin</a></li>' 
                                 : '') .
-                                '<li><a href="#" onclick=" return false">
+                                '<li><a href="#" onclick=\'changePage("ProfilePage"); return false\'>
                                 <i class="fas fa-address-card"></i> Profile</a></li>	
 
                                 <li><a href="#" onclick=\'logOut("false"); return false\'>
@@ -179,12 +182,52 @@ class User {
 
     }
 
+    public function getUserProblemsOptions() {
+        if(!$this->isGuest()) {
+            return '<button class="project-view-button" onclick=\'changePage("NewProblem"); 
+            return false\'><i class="fas fa-plus-circle"></i> New Project</button>'
+            . (($this->isAdmin() || $this->canApprove()) ? 
+            '<button class="project-view-button" onclick="pendingApproval(); 
+            return false"><i class="fas fa-check-circle"></i> View Pending</button>' 
+            : 
+            '');
+        }
+        else {
+            return '';
+        }
+    }
+
+
+    public function getPageContents($pageName) {
+
+
+        
+    }
+
+    public function getUserHash() {
+        if(!$this->isGuest()){
+            return $this->user->hash;
+        }
+        return "0000";
+    }
+
+    public function updateDetails($_MyPost) {
+        if(!$this->isGuest()) {
+
+            $this->updateUserDetails($_MyPost->first_name, $_MyPost->last_name, $_MyPost->address,
+            $_MyPost->phone_number, $_MyPost->birth_date);
+
+        }
+        else {
+            throw new Exception("User is guest!");
+        }
+
+    }
+
     public function getOauth() {
         if(!$this->isGuest()) {
             return $this->user->oauth;
         }
-
-
     }
     public function isAdmin() {
         if(!$this->isGuest()){
@@ -192,14 +235,155 @@ class User {
         }
     }
 
+    public function canApprove() {
+        if(!$this->isGuest()){
+            return ($this->privileges->cna_approve) ? true : false;
+        }
+    }
+
+
+
+    public function getFirstName() {
+        return $this->details->first_name;
+    }
+
+    public function getLastName() {
+        return $this->details->last_name;
+    }
+
+    public function getAddress() {
+        return $this->details->address;
+    }
+
+    public function getPhone() {
+        return $this->details->phone_number;
+    }
+
+    public function getProfilePicture() {
+        return $this->details->profile_picture;
+    }
+
+    public function setProfilePicture(string $path) {
+        if(!$this->isGuest()) {
+            $this->details->profile_picture = $path;
+            $this->details->save();
+        }
+        return;
+    }
+
+    public function getTitle() {
+        return $this->details->title;
+    }
+
+    public function setTitle(string $title) {
+        if(!$this->guest()) {
+            $this->details->title = $title;
+            $this->details->save();
+        }
+    }
+
+    public function getBirthDate() {
+        return $this->details->birth_date;
+    }
+
+    public function getUserPoints() {
+        if(!$this->isGuest()) {
+            $problemsSolved = ORM::for_table('problems')
+                ->inner_join(
+                    'problems_solved',
+                    array( 'problems_solved.problem', '=', 'problems.id'))
+                ->where(array('problems_solved.user' => $this->user->id, 'problems.approved' => 1))   
+                ->select_expr('sum(problems.points)', 'result')    
+                ->find_many();
+
+            if($problemsSolved) {
+                return $problemsSolved[0]->result;
+            }
+        }
+        return 0;
+    }
+
+    public function getNumberOfProblemsSolved() {
+        if(!$this->isGuest()) {
+            $problemsSolved = ORM::for_table('problems')
+                ->inner_join(
+                    'problems_solved',
+                    array( 'problems_solved.problem', '=', 'problems.id'))
+                ->where(array('problems_solved.user' => $this->user->id, 'problems.approved' => 1))  
+                ->select_expr('count(*)', 'result')    
+                ->find_many();
+
+            if($problemsSolved) {
+                return $problemsSolved[0]->result;
+            }
+        }
+        return 0;
+    }
+
+    public function getUsername() {
+        if(!$this->isGuest()) {
+            return $this->user->name;
+        }
+        return "Guest";
+    }
+
+    public function getEmailAddress() {
+        if(!$this->isGuest()) {
+            return $this->user->email;
+        }
+        return "mtarena@mtarena.ro";
+    }
+
+    public function getNumberOfPublishedProblems() {
+        if(!$this->isGuest()) {
+            $problemsSolved = ORM::for_table('problems')
+                ->select_expr('count(*)', 'result')    
+                ->where(array('problems.author' => $this->user->id))  
+                ->find_many();
+            if($problemsSolved) {
+                return $problemsSolved[0]->result;
+            }
+        }
+        return 0;
+    }
+
 
     // !Helper functions
+
+    private function updateUserDetails($first_name, $last_name, $address, $phone_number, $birth_date) {
+        if(!$this->isGuest()){
+            $this->details->first_name = $first_name;
+            $this->details->last_name = $last_name;
+            $this->details->address = $address;
+            $this->details->phone_number = $phone_number;
+            $this->details->birth_date = $birth_date;
+
+            try{
+                $this->details->save();
+            }
+            catch(Exception $e) {
+                throw new Exception("Database Error!");
+            }
+        }
+    }
 
 
     private function findPrivileges() {
         $privileges = ORM::for_table('privileges')->where(array('user' => $this->user->id))->find_one();
+        if($privileges == false) {
+            return $this->createPrivileges();
+        }
         $this->privileges = $privileges;
         return $privileges;
+    }
+
+    private function findDetails() {
+        $details = ORM::for_table('user_details')->where(array('user' => $this->user->id))->find_one();
+        if($details == false) {
+            return $this->createDetails();
+        }
+        $this->details = $details;
+        return $details;
     }
 
     private function createPrivileges() {
@@ -208,6 +392,14 @@ class User {
         $privileges->save();
         $this->privileges = $privileges;
         return $privileges;
+    }
+
+    private function createDetails() {
+        $details = ORM::for_table('user_details')->create();
+        $details->user = $this->user->id;
+        $details->save();
+        $this->details = $details;
+        return $details;
     }
 
     private function logUser($userId) {

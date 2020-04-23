@@ -140,7 +140,7 @@ class Logger
                         throw new Exception("Cookie is corrupted");
                     
                     $user->setStatusOffline();
-
+                    
                     echo json_encode(
                         array(
                             'statusCode' => 200,

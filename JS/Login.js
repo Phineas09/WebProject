@@ -18,6 +18,7 @@ checkIsLogged();
 
 //Mark user as offline when closing the website
 window.addEventListener('beforeunload', function () {
+	console.log("here");
 	logOut(true);
 });
 
@@ -59,7 +60,7 @@ function setLoggedInNavbar() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
 			//console.log(this.response);
-			console.log(this.responseText);
+
 			var response = JSON.parse(this.responseText);
 
 			if(response.statusCode == 200) {
@@ -417,7 +418,7 @@ function facebookLogout() {
 function _oauthLoginFunction() {
 	
 	if(this.readyState == 4 && this.status == 200) {
-		
+
 		var response = JSON.parse(this.responseText);
 
 		var messageBox = document.getElementById("signInMessageBox");
@@ -549,7 +550,7 @@ function logOut(logOutOnClose) {  //Gets true if the window is closed, else gets
 		if(this.readyState == 4 && this.status == 200) {
 
 			var response = JSON.parse(this.responseText);
-
+			console.log(this.responseText);
 			if(response.statusCode == 200) {
 				//Facebook Login or google Login
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html id="mainHtml"  lang="en">
+<html id="mainHtml"   theme="blue" lang="en">
 <head>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +9,11 @@
 	<link rel="stylesheet"  href="./CSS/Login.css">
 	<link rel="stylesheet"  href="./CSS/Style.css">
 	<link rel="stylesheet"  href="./CSS/Container.css">
-	<link rel="stylesheet"  href="./CSS/Projects.css">
-
+    <link rel="stylesheet"  href="./CSS/Projects.css">
 	<link rel="stylesheet"  href="./CSS/NewProblem.css">
 	<link rel="stylesheet"  href="./CSS/RichStyleEditor.css">
+
+    
 	<link rel="stylesheet"  href="./CSS/ProfilePage.css">
 
 
@@ -111,81 +112,136 @@
 	
 <div id="page-container">
 	<div id="content" class="content">
-		<div id="contentContainerScroll" class="content-container fill-screen-no-scroll">
 
-			<section id="home-content-container-section">
-				<img src="Images/home_desktop_programmer.svg" ondragstart="return false" alt="Programming image" class="programmer selectDisable">
+		<div class="profileContent">
+			<div id="profileHeader" class="profileHeader">
+				<div class="profileHeaderContent">
+				</div>
+				<p class="profileTitle">Rookie</p>
+				<div class="profileName">
+					<p>Gigel Gogu</p>
+					<p>user@email.com</p>
+				</div>
 
-				<h2>Achieve mastery through challanges</h2>
-				<p class="subhead">Improve your skills by training with others on real code challenges.</p>
+				<div class="profileImageWrapper">
+					<img src="/Misc/Default/Profile.png"  class="avatar" alt="Profile Picture">
 
-				<!-- img src="Images/scroll.svg" alt="scroll down" class="scroll hide-mobile show-desktop"> -->
-			</section>
-    	</div>
-		
-		<div class="green-container">
-			<div class="content-container">
-				<ul>
-					<li class="module-left">
-						<img src="Images/home_image2.svg" alt="icon" ondragstart="return false" class="selectDisable">
-						<p class="green-container-title">Sharpen your skills</p>
-						<p>Challenge yourself with the problems created by the community to strengthen different skills. Master your current language of choice, or expand your understanding of a new one.</p>
-					</li>
-					<li class="module-middle">
-						<img src="Images/home_image1.svg" alt="icon" ondragstart="return false" class="selectDisable">
-						<p class="green-container-title">Earn ranks and honor</p>
-						<p>Problems are ranked to approximate difficulty. As you complete higher ranked problems, you will receive more points and more relevant problems.</p>		
-					</li>	
-					<li class="module-right">
-						<img src="Images/home_image3.svg" alt="icon" ondragstart="return false" class="selectDisable">
-						<p class="green-container-title">Create your own problems</p>
-						<p>Create problems that focus on your interests and train specific skillsets. Challenge the community with your insight and code understanding.</p>	
-					</li>
-				</ul>
+					<figcaption>
+						<!-- Upload new profile picture -->
+						<input onchange="changeProfilePicture(this); return false;" type='file'  hidden/>
+						<button onclick="this.previousElementSibling.click()"><i class="fas fa-plus-circle"></i></button>
+					</figcaption>
+				</div>
+
+
 			</div>
-    	</div>
-		
-		<div class="gray-container">
-			<div class="content-container">
-				<ul>
-					<li class="module-middle gray-item1">
-						<figcaption class="green-container-title">How MTArena works ?</figcaption>	
-					</li>
-					<li class="module-middle gray-item2">
-						<figure>
-							<img src="Images/home_presentation1.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
-							<figcaption>Choose a language to master</figcaption>
-							<blockquote>Object oriented, functional, popular, emerging, or just plain obscure. Choose whaterever you want, we will have something for you!</blockquote>
-						</figure>
-					</li>
-					
-					<li class="module-middle gray-item3">
-						<figure>
-							<img src="Images/home_presentation2.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
-							<figcaption>Complete a coding challenge on your computer</figcaption>
-							<blockquote>All the coding happens on your machine in an environment you're familiar with. Download the problem, solve it, then upload your solution.</blockquote>
-						</figure>
-					</li>
-					
-					<li class="module-middle gray-item4">
-						<figure>
-							<img src="Images/home_presentation3.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
-							<figcaption>Upload your solution and review it</figcaption>
-							<blockquote>Discussing code is one of the best ways to learn. Our friendly community will comment on your solutions online, introducing you to new ideas and techniques.</blockquote>
-						</figure>
-					</li>
-					
-				</ul>
-			</div>
-	    </div>	
 			
-		<div style="height: 200px" class="content-container">
-			<h2>Start coding right now!</h2>
-			<a id="getStartedButton" href="" onclick="popUpLogin(); return false" class="getStartedButton" >Get Started</a>
-		</div>	
+			<div class="profileMenuNav">
+				<ul>
+					<li>
+						<button id="showProfileButton" class="profileMenuActive" onclick='profileShow(this); return false;'><i class="fas fa-user-alt"></i></button>
+					</li>
+					<li>
+						<button onclick='showFriendRequests(this); return false;'><i class="fas fa-users"></i></button>
+					</li>
+					<li>
+						<button onclick='editProfile(this); return false;'><i class="fas fa-user-cog"></i></button>
+					</li>
+				</ul>
+			</div>
+
+
+			<div id="userDetails" class="userDetails">
+				<div class="userDetailsElement">
+					<div class="inputIcon">
+						<i class="fas fa-signature"></i>
+					</div>
+					<div class="inputFormated">
+						<input type="text" name="first_name" autocomplete="off" disabled spellcheck="false" value="Unset" required/>
+						<label for="firstname" class="inputFormated-label">
+							<span class="inputFormated-content">First Name</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="userDetailsElement">
+					<div class="inputIcon">
+						<i class="fas fa-signature"></i>
+					</div>
+					<div class="inputFormated">
+						<input type="text" name="last_name" autocomplete="off"  disabled spellcheck="false" value="Unset" required/>
+						<label for="lastname" class="inputFormated-label">
+							<span class="inputFormated-content">Last Name</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="userDetailsElement">
+					<div class="inputIcon">
+						<i class="fas fa-address-book"></i>
+					</div>
+					<div class="inputFormated">
+						<input type="text" name="address" autocomplete="off" disabled spellcheck="false" value="Unset" required/>
+						<label for="address" class="inputFormated-label">
+							<span class="inputFormated-content">Address</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="userDetailsElement">
+					<div class="inputIcon">
+						<i class="fas fa-mobile"></i>
+					</div>
+					<div class="inputFormated">
+						<input type="text" name="phone_number" autocomplete="off" maxlength="10" disabled spellcheck="false" value="Unset" required/>
+						<label for="phone" class="inputFormated-label">
+							<span class="inputFormated-content">Phone</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="userDetailsElement">
+					<div class="inputIcon">
+						<i class="far fa-calendar-plus"></i>
+					</div>
+					<div class="inputFormated">
+						<input type="date" name="birth_date" autocomplete="off" disabled spellcheck="false" value="Default"/>
+						<label for="birthdate" class="inputFormated-label">
+							<span class="inputFormated-content">Birth Date</span>
+						</label>
+					</div>
+				</div>
+				
+				<button id="saveChangesButton" href="" onclick="saveProfileInformation(this); return false" class="saveProfileButton hidden" >Save</button>
+		
+			</div>
+
+			<div class="profileStats">
+				<p class="profileStatsTitle">Statistics</p>
+				<div class="profileStatsList">
+					<ul>
+						<li>
+							<p>Points</p>
+							<p>1050</p>
+						</li>
+						<li>
+							<p>Solved</p>
+							<p>15</p>
+						</li>
+						<li>
+							<p>Posted</p>
+							<p>1</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+
+
+
+		</div>
 
 	</div>
-
 	<footer id="footer">
         <div class="footer-container">
             <div class="content-container">

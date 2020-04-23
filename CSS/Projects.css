@@ -115,8 +115,8 @@
 }
 
 .project-options-container > .projectSortByDiv select { 
-	-webkit-appearance: button-arrow-down;
-	-moz-appearance: button-arrow-down;
+	-webkit-appearance: none;
+	-moz-appearance: none;
 	color: inherit;
 	font-weight: 500;
 	background: transparent;
@@ -129,9 +129,12 @@
 	
 }
 .project-options-container > .projectSortByDiv::after {
-	display: block;
-	content: "\f0d7";
-	font-family: FontAwesome;
+	content: " ";
+	width: 0; 
+	height: 0; 
+	border-left: 	6px solid transparent;
+	border-right: 	6px solid transparent;
+	border-top: 	6px solid white;
 }
 
 .project-options-container > .projectSortByDiv option {
@@ -234,7 +237,6 @@
 	flex-wrap: wrap;
 	align-content: center;
 	
-	//justify-content: flex-start;
 }
 
 

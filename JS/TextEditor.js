@@ -76,27 +76,29 @@ function formatiFrames() {
     var iframes = document.getElementsByTagName('iframe');
     for(let iframe of iframes) {
         if(!iframe.getAttribute("formatted") && iframe.name === "richTextField"){ 
-            iframe.setAttribute("formatted", "true");
 
             iframe.contentDocument.getElementsByTagName("body")[0].innerHTML = iframe.id +   '<div style="text-align: center;">Enter Text Here</div>';
 
             var script   = document.createElement("script");
             script.type  = "text/javascript";
-            script.src   = "./JS/iFrame.js";    // use this for linked script
+            script.src   = "/JS/iFrame.js";   
             iframe.contentDocument.head.appendChild(script);
 
             var cssLink = document.createElement("link");
-            cssLink.href = "./../Css/iFrame.css"; 
+            cssLink.href = "/Css/iFrame.css"; 
             cssLink.rel = "stylesheet"; 
             cssLink.type = "text/css"; 
             iframe.contentDocument.head.appendChild(cssLink);
+            iframe.setAttribute("formatted", "true");
+
         }
     }
 }
 
 function formatEditorElements() {
-    formatiFrames();
+
     formatDrawElements();
+    formatiFrames();
 }
 
 function activateTextEditor(element) {

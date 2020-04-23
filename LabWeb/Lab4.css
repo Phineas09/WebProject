@@ -1,0 +1,25 @@
+
+.container1 {
+    height: 1150px;
+    width: 1150px;
+    background-color: yellow;
+    display: grid;
+    grid-template-columns: repeat(10, 100px);
+	grid-template-rows: repeat(10, 100px);
+    grid-gap: 1em;
+    padding: 1em; /* NEW */
+    background-color: green;
+    grid-gap : 1em;
+}
+
+.container1 .element:nth-child(3n+3) {
+    background-color: white;
+}
+
+.container1 .element:nth-child(3n+2) {
+    background-color: #333;
+}
+
+.container1 .element:nth-child(3n+1) {
+    background-color: blue;
+}

@@ -24,8 +24,16 @@ class PageChanger {
 		this._link = newLink;
 	}
 
-	changePage() {
+	changePage(userFormatted = false) {
 
+		let data = {"pageChange" : true,
+					"page" : this._page};
+
+		if(userFormatted == true) {
+			data["userFormatted"] = true;
+		}			
+
+		//force the page change request to be syncronus @!s
 		makeHttpRequest( function() {
 			if(this.readyState == 4 && this.status == 200) {
 				//console.log(this.responseText);
@@ -43,14 +51,12 @@ class PageChanger {
 				}
 			}
 		},
-			{
-				"pageChange" : true,
-				"page" : this._page
-			},
-			this._link
+			data,
+			this._link,
+			false
 		);
 	}
-	
+
 }
 
 // ! Page history thingy
@@ -86,7 +92,9 @@ var historyStack = [];
 var pageDictionary = {
 
 	"Home" : pageChangeHome,
-	"Problems" : pageChangeProjects
+	"Problems" : pageChangeProjects,
+	"NewProblem" : pageChangeNewProblem,
+	"ProfilePage" : pageChangeProfilePage
 
 };
 
@@ -96,15 +104,57 @@ function changePage(page) {
 	currentPage = page;
 }
 
+function pageChangeProfilePage() {
+	pageChanger.page = "ProfilePage";
+	//User formatted page
+	pageChanger.changePage(true);
+	document.getElementById("mainHtml").setAttribute("theme", "blue");
+	
+	return false;
+}
+
+
 function pageChangeProjects() {
 
 	pageChanger.page = "Problems";
 
 	pageChanger.changePage();
-	document.getElementById("mainHtml").setAttribute("theme", "blue")
-
+	document.getElementById("mainHtml").setAttribute("theme", "blue");
+	loadProblemsOptions();
 	loadProblemList();
 	executeAnimationsLoading();
+
+	return false;
+}
+
+function pageChangeNewProblem() {
+
+	pageChanger.page = "NewProblem";
+	pageChanger.changePage();
+
+	//? Nu am habar de ce e nevoie de asta 1??
+	setTimeout(function () {
+		formatEditorElements();
+	}, 200);
+	return false;
+}
+
+function loadProblemsOptions() {
+	makeHttpRequest(function() {
+		if(this.readyState == 4 && this.status == 200) {
+
+			var response = JSON.parse(this.responseText);
+	
+			if(response.statusCode == 200) {
+				document.getElementById("problemsOptions").innerHTML = response.options;
+			}
+		}
+	}, 	
+	{
+		"user" : true,
+		"problemsOptions" : true
+	}
+	);
 
 	return false;
 }

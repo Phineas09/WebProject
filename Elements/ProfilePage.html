@@ -1,0 +1,126 @@
+<div class="profileContent">
+    <div id="profileHeader" class="profileHeader">
+        <div class="profileHeaderContent">
+        </div>
+        <p class="profileTitle">ReplaceTitle</p>
+        <div class="profileName">
+            <p>ReplaceUsername</p>
+            <p>ReplaceEmailAddress</p>
+        </div>
+
+        <div class="profileImageWrapper">
+            <img id="profileImageRefresh" src="ReplaceProfileImage"  class="avatar" alt="Profile Picture">
+
+            <figcaption>
+                <!-- Upload new profile picture -->
+                <input id="filesToUpload" onchange="changeProfilePicture(this);" type='file'  hidden/>
+                <button onclick="this.previousElementSibling.click()"><i class="fas fa-plus-circle"></i></button>
+            </figcaption>
+        </div>
+
+
+    </div>
+    
+    <div class="profileMenuNav">
+        <ul>
+            <li>
+                <button id="showProfileButton" class="profileMenuActive" onclick='profileShow(this); return false;'><i class="fas fa-user-alt"></i></button>
+            </li>
+            <li>
+                <button onclick='showFriendRequests(this); return false;'><i class="fas fa-users"></i></button>
+            </li>
+            <li>
+                <button onclick='editProfile(this); return false;'><i class="fas fa-user-cog"></i></button>
+            </li>
+        </ul>
+    </div>
+
+
+    <div id="userDetails" class="userDetails">
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-signature"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="text" name="first_name" autocomplete="off" disabled spellcheck="false" value="ReplaceFirstName" required/>
+                <label for="firstname" class="inputFormated-label">
+                    <span class="inputFormated-content">First Name</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-signature"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="text" name="last_name" autocomplete="off"  disabled spellcheck="false" value="ReplaceLastName" required/>
+                <label for="lastname" class="inputFormated-label">
+                    <span class="inputFormated-content">Last Name</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-address-book"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="text" name="address" autocomplete="off" disabled spellcheck="false" value="ReplaceAddress" required/>
+                <label for="address" class="inputFormated-label">
+                    <span class="inputFormated-content">Address</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-mobile"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="text" name="phone_number" autocomplete="off" maxlength="10" disabled spellcheck="false" value="ReplacePhone" required/>
+                <label for="phone" class="inputFormated-label">
+                    <span class="inputFormated-content">Phone</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="far fa-calendar-plus"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="date" name="birth_date" autocomplete="off" disabled spellcheck="false" value="ReplaceBirth"/>
+                <label for="birthdate" class="inputFormated-label">
+                    <span class="inputFormated-content">Birth Date</span>
+                </label>
+            </div>
+        </div>
+        
+        <button id="saveChangesButton" href="" onclick="saveProfileInformation(this); return false" class="saveProfileButton hidden" >Save</button>
+
+    </div>
+
+    <div class="profileStats">
+        <p class="profileStatsTitle">Statistics</p>
+        <div class="profileStatsList">
+            <ul>
+                <li>
+                    <p>Points</p>
+                    <p>ReplacePoints</p>
+                </li>
+                <li>
+                    <p>Solved</p>
+                    <p>ReplaceSolved</p>
+                </li>
+                <li>
+                    <p>Posted</p>
+                    <p>ReplacePosted</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+</div>

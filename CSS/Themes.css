@@ -12,6 +12,9 @@
 	--themeSecondary: #339933;
 	--textEditor: #333;
 	--theme-darkness: 1;
+
+	--error: #cc0606;
+	--success: #6ba63c;
 }
 
 :root[theme='blue'] {
@@ -20,4 +23,7 @@
 	--textColor: gray;
 	--textEditor: #333;
 	--theme-darkness: 1;
+
+	--error: #cc0606;
+	--success: #6ba63c;
 }
