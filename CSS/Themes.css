@@ -13,6 +13,8 @@
 	--textEditor: #333;
 	--theme-darkness: 1;
 
+	--graphColor: #F16335;
+
 	--error: #cc0606;
 	--success: #6ba63c;
 }
@@ -23,6 +25,9 @@
 	--textColor: gray;
 	--textEditor: #333;
 	--theme-darkness: 1;
+
+
+	--graphColor: #F16335;
 
 	--error: #cc0606;
 	--success: #6ba63c;

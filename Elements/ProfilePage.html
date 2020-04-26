@@ -30,6 +30,9 @@
                 <button onclick='showFriendRequests(this); return false;'><i class="fas fa-users"></i></button>
             </li>
             <li>
+                <button onclick='changePassword(this); return false;'><i class="fas fa-key"></i></button>
+            </li>
+            <li>
                 <button onclick='editProfile(this); return false;'><i class="fas fa-user-cog"></i></button>
             </li>
         </ul>
@@ -98,6 +101,47 @@
         </div>
         
         <button id="saveChangesButton" href="" onclick="saveProfileInformation(this); return false" class="saveProfileButton hidden" >Save</button>
+
+    </div>
+
+    <div id="userDetailsPassword" class="userDetails hidden">
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="inputFormated">
+                <input id="userDetailsChangePasswordOrigin" type="password" minlength="8" name="current_password" autocomplete="off" spellcheck="false" required/>
+                <label for="current_password" class="inputFormated-label">
+                    <span class="inputFormated-content">Current Password</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="password" minlength="8" name="new_password" autocomplete="off"  spellcheck="false" required/>
+                <label for="new_password" class="inputFormated-label">
+                    <span class="inputFormated-content">New Password</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="userDetailsElement">
+            <div class="inputIcon">
+                <i class="fas fa-key"></i>
+            </div>
+            <div class="inputFormated">
+                <input type="password" minlength="8" name="new_password_repeat" autocomplete="off" spellcheck="false" required/>
+                <label for="new_password_repeat" class="inputFormated-label">
+                    <span class="inputFormated-content">Repeat Password</span>
+                </label>
+            </div>
+        </div>
+        
+        <button id="changePasswordSubmit" href="" onclick="changeUserPassword(this); return false" class="saveProfileButton" >Save</button>
 
     </div>
 

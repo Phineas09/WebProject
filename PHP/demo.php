@@ -33,7 +33,7 @@
         password TEXT,
         hash TEXT,
         online INTEGER,
-        validated INTEGER 
+        validated INTEGER
     );";
 
     $problems = "
@@ -85,13 +85,27 @@
 
     $logs_view = "
         CREATE OR REPLACE VIEW userStatistics AS 
-            SELECT
-            DATE(date) as day,
-            COUNT(DISTINCT(user)) AS user
-        FROM
-            logs
-        GROUP BY
-            DATE(date)
+        SELECT 
+        IF(user IS NULL, 0, user) AS user,
+        b.Days AS date
+    FROM 
+        (SELECT a.Days 
+        FROM (
+            SELECT curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Days
+            FROM       (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a
+            CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b
+            CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c
+        ) a
+        WHERE a.Days >= curdate() - INTERVAL 13 DAY) b
+    LEFT JOIN (SELECT
+                DATE(date) as day,
+                COUNT(DISTINCT(user)) AS user
+            FROM
+                logs
+            GROUP BY
+                DATE(date)) s
+        ON s.day = b.Days
+    ORDER BY b.Days;
     ;";  
 
     $privilege = "
@@ -115,9 +129,20 @@
             birth_date DATE,
             profile_picture TEXT DEFAULT '/Misc/Default/Profile.png',
             title TEXT DEFAULT 'Rookie',
+            lastAct TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_user_details FOREIGN KEY (user) REFERENCES users(id)
     );";
 
+
+    $eventUsersOnline = '
+        CREATE EVENT usersOnline
+            ON SCHEDULE
+                EVERY 60 SECOND
+            DO
+                UPDATE users u
+                INNER JOIN user_details ud ON u.id = ud.user
+                SET u.online = if(NOW() - ud.lastAct < 60 , 1, 0);
+    ';
 
 // ! To do ProblemsDetails and Problems IO files, pictures and others ????????????
 
@@ -181,6 +206,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return $logger->handler($_MyPost);
     }
 
+
+    if(isset($_MyPost->activeCheck)) {
+
+        try {
+            
+            $user = new User();
+            $user->markLastAct();
+            
+            echo json_encode(
+                array(
+                    'statusCode' => 200
+                ));
+        } 
+        catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'statusCode' => 420
+                ));
+        }
+        exit;
+
+    }
 
 
     if(isset($_MyPost->loadProblems)) {
@@ -268,6 +315,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ));
         }
 
+        if(isset($_MyPost->changeUserPassword)) {
+            $user = new User();
+            $user->changePassword($_MyPost->current_password, $_MyPost->new_password);
+            echo json_encode(
+                array(
+                    'statusCode' => 200
+                ));
+        }
+
         }
         catch (Exception $e) {
             echo json_encode(
@@ -305,24 +361,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(isset($_MyPost->stats)) {
 
         try {
-            
             if(isset($_MyPost->loggedUsersChars)) {
             
             $result = ORM::for_table('userstatistics')
-            ->select_many('user',
-             array('date' => 'day'))
-            ->group_by('day')
+            ->select_many_expr('user',
+             array('date' => 'DATE_FORMAT(date, "%d/%m")'))
             ->find_many();
 
-
-            $dataArray = [];
+            $dataArray = "";
 
             if($result) {
                 foreach($result as $row) {
-                    $dataArray[$row->date] = $row->user;
+                    $dataArray = $dataArray . 
+                    '<tr style="height:' .  10 * intval($row->user) . '%">
+                    <th scope="row">' . $row->date . '</th>
+                    <td>
+                        <span>' . $row->user . '</span>
+                        <div title="' . $row->user . ' Users on ' . $row->date . '" class="chartTooltip"></div>
+                    </td>
+                    </tr>';
                 }   
             }
-            
 
             echo json_encode(
                 array(
@@ -330,6 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'elementInner' => $dataArray
                 ));
             }
+
             if(isset($_MyPost->onlineUsers)) {
 
                 $result = ORM::for_table('users')

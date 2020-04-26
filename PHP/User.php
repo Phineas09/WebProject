@@ -286,6 +286,16 @@ class User {
         return $this->details->birth_date;
     }
 
+    public function markLastAct() {
+        if(!$this->isGuest()) {
+            ORM::get_db()->exec('UPDATE user_details 
+            set lastAct = CURRENT_TIMESTAMP
+            where user =' . $this->user->id . ';');
+            return;
+        }
+        throw new Exception("User is a gues!");
+    }
+
     public function getUserPoints() {
         if(!$this->isGuest()) {
             $problemsSolved = ORM::for_table('problems')
@@ -347,6 +357,22 @@ class User {
         return 0;
     }
 
+    public function changePassword($currentPassword, $newPassword) {
+        if(!$this->isGuest()){
+
+            if(strcmp(hash('sha256', $currentPassword), $this->user->password) == 0) {
+                $this->user->password = hash('sha256', $newPassword);
+                $this->user->save();
+            }
+            else {
+                throw new Exception("Wrong password!");
+            }
+            return;
+        }
+        throw new Exception("User is guest!");
+        
+
+    }
 
     // !Helper functions
 

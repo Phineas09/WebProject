@@ -15,10 +15,22 @@ function deactivateActivateButton(button) {
     button.classList.add("profileMenuActive");
 }
 
+function activateProfileDetailsDiv() {
+    document.getElementById("userDetails").classList.remove("hidden");
+    document.getElementById("userDetailsPassword").classList.add("hidden");
+}
+
+function closeProfileDetailsDiv() {
+    document.getElementById("userDetails").classList.add("hidden");
+    document.getElementById("userDetailsPassword").classList.remove("hidden");
+}
+
+
 function editProfile(button) {
 
     //Unset another already active button
     deactivateActivateButton(button);
+    activateProfileDetailsDiv();
     var inputForms = document.getElementById("userDetails").getElementsByTagName("input");
     for(let inputForm of inputForms) {
         inputForm.removeAttribute("disabled");
@@ -33,7 +45,7 @@ function editProfile(button) {
 
 function profileShow(button) {
     deactivateActivateButton(button);
-
+    activateProfileDetailsDiv();
     var inputForms = document.getElementById("userDetails").getElementsByTagName("input");
     for(let inputForm of inputForms) {
         inputForm.setAttribute("disabled", "");
@@ -82,6 +94,72 @@ function saveProfileInformation(informationContainer) {
     return false;
 
 }
+
+function changePassword(button) {
+    deactivateActivateButton(button);
+    // Close Profile details div
+    //Activate password div
+    closeProfileDetailsDiv();
+}
+
+function changeUserPassword(publisher) {
+
+    let parent = publisher.parentElement;
+
+    let inputFields = parent.getElementsByTagName("input");
+
+    if(inputFields.length == 3) {
+        let newPassword = inputFields[1];
+        let repeatPassword = inputFields[2];
+
+        if(newPassword.value != repeatPassword.value) {
+            repeatPassword.setCustomValidity("Passwords Don't Match");
+            return;
+        } else {
+            repeatPassword.setCustomValidity('');
+        }
+
+        let myNewData = {};
+
+        for(let input of inputFields) {
+            if(input.validity) 
+                myNewData[input.name] = input.value;
+            else {
+                console.log(input.value);
+                publisher.classList.add("errorButton");
+                publisher.innerHTML = "Error";
+            }
+        }
+
+        myNewData["user"] = true;
+        myNewData["changeUserPassword"] = true;
+
+        makeHttpRequest(function() {
+            if(this.readyState == 4 && this.status == 200) {
+    
+                let button = document.getElementById("changePasswordSubmit");
+                
+                //console.log(this.responseText);
+                
+                var response = JSON.parse(this.responseText);
+        
+                if(response.statusCode == 200) {
+                    button.innerHTML = "Success";
+                    button.classList.remove("errorButton");
+                    button.classList.add("successButton");
+                    document.getElementById("userDetailsChangePasswordOrigin").setCustomValidity('');
+                    return;
+                }
+                document.getElementById("userDetailsChangePasswordOrigin").setCustomValidity("Invalid Password");
+                button.innerHTML = "Error";
+                button.classList.add("errorButton");
+                button.classList.remove("successButton");
+            }
+        }, 	myNewData
+        );
+    }
+}
+
 
 
 function changeProfilePicture(input) {

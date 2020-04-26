@@ -18,8 +18,8 @@ checkIsLogged();
 
 //Mark user as offline when closing the website
 window.addEventListener('beforeunload', function () {
-	console.log("here");
-	logOut(true);
+	//console.log("here");
+	//logOut(true);
 });
 
 signUpButton.addEventListener('click', function() {
@@ -56,6 +56,18 @@ function getCookie(cname) {
   return "";
 }
 
+
+function recuringLoggedInRequest() {
+	makeHttpRequest(function () {
+		if(this.readyState == 4 && this.status == 200) {
+			console.log(this.response);
+		}
+	},
+	{
+		"activeCheck" : true
+	});
+}
+
 function setLoggedInNavbar() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
@@ -67,6 +79,10 @@ function setLoggedInNavbar() {
 				var navbarLogin = document.getElementById("hoverMenu");		
 				navbarLogin.innerHTML = response.navbar;
 			}
+
+			window.setInterval(recuringLoggedInRequest , 30000);
+
+
 		}
 	},
 	{
@@ -77,6 +93,7 @@ function setLoggedInNavbar() {
 
 function setLoggedOutNavbar() {
 	
+	window.clearInterval();
 	var navbarLi = document.getElementById("hoverMenu");
 	navbarLi.innerHTML = '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
 

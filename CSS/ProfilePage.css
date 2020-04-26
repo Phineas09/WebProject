@@ -42,25 +42,33 @@
     transition: all 0.3s ease;
 }
 
+.inputFormated input:invalid {
+    color: white;
+}
+
 .inputFormated input:disabled {
     background: white;
 }
 
 .inputFormated input:focus + .inputFormated-label .inputFormated-content,
 .inputFormated input:valid + .inputFormated-label .inputFormated-content,
-.inputFormated input:disabled + .inputFormated-label .inputFormated-content    {
+.inputFormated input:disabled + .inputFormated-label .inputFormated-content   {
     transform: translateY(-120%);
     color: var(--themePrimary);
     outline: none;
-
 }
+
+.inputFormated input:focus,
+.inputFormated input:valid {
+    color: #333;
+}
+
 
 .inputFormated input:focus + .inputFormated-label::after,
 .inputFormated input:valid + .inputFormated-label::after {
     transform: scaleX(1);
     outline: none;
 }
-
 
 .userDetails {
 

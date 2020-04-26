@@ -113,61 +113,109 @@
 	
 <div id="page-container">
 	<div id="content" class="content">
-        <div class="adminNavigation">
-            <ul>
-                <li>
-                    <button>
-                        <div class="adminNavigationIconWrapped">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </button>
-                </li>
-                <li>
-                    <button class="profileMenuActive">
-                        <div class="adminNavigationIconWrapped">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                    </button>
-                </li>
-                <li>
-                    <button>
-                        <div class="adminNavigationIconWrapped">
-                            <i class="fas fa-list-ul"></i>
-                        </div>
-                    </button>
-                </li>
-            </ul>
-        </div>
 
 
-        <div class="project-header">
+		<div class="project-header">
 			<div class="content-container">
 	
 				<section>
 					<div class="problems-navigation">
-						<h1>Statistics </h1>
-                    </div>
-					<p>Welcome to the statistics page!</p>
+						<h1>Users </h1>
+					</div>
+					<p>Welcome to the users edit page!</p>
 				</section>
 			</div> 
 		</div>
+		
+		<div id="adminNavigationCool" data="users" class="profileMenuNav">
+			<ul>
+				<li>
+					<button class="profileMenuActive">
+						<div class="adminNavigationIconWrapped">
+							<i class="fas fa-users"></i>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button>
+						<div class="adminNavigationIconWrapped">
+							<i class="fas fa-chart-pie"></i>
+						</div>
+					</button>
+				</li>
+				<li>
+					<button>
+						<div class="adminNavigationIconWrapped">
+							<i class="fas fa-list-ul"></i>
+						</div>
+					</button>
+				</li>
+			</ul>
+		</div>
 
-        <div class="usersOnline">
-            <p class="profileStatsTitle">Online Users</p>
-            <p id="onlineUsersDisplay"></p>
-        </div>
+		<div class="addUserButton">
 
+			<button onclick="adminAddUser(this); return false;" class="saveProfileButton">Add User</button>
+		</div>
 
-        <div class="adminCharts">
-            <p class="chartTitle">Users Trends</p>
-
-            <div id="line-chart" class="adminLineChart"></div>
-        </div>
-
-
+		<div class="usersTable">
+			<table class="usersShowTable">
+				<caption>Users Summary</caption>
+				<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Username</th>
+					<th scope="col">Last Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Phone</th>
+					<th scope="col">Admin</th>
+					<th scope="col"><button onclick="adminAddUser(this); return false;" class="formattedButton"><i class="fas fa-plus"></i></button></th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td data-label="ID">1</td>
+					<td data-label="Username">OddPants</td>
+					<td data-label="Last Name">Ghenea</td>
+					<td data-label="Email">claudiu.ghenea15@yahoo.ro</td>
+					<td data-label="Phone">0732101694</td>
+					<td data-label="Admin"><i class="fas fa-check"></i></td>
+					<td data-label="Options">
+						<button onclick="adminEditUser(this); return false;" class="formattedButton"><i class="fas fa-lg fa-edit"></i></button>
+						<button onclick="adminDeleteUser(this); return false;" class="formattedButton"><i class="fas fa-lg fa-user-minus"></i></button></td>
+				</tr>
+				<tr>
+					<td data-label="ID">2</td>
+					<td data-label="Username">OddPants</td>
+					<td data-label="Last Name">Ghenea</td>
+					<td data-label="Email">claudiu.ghenea15@yahoo.ro</td>
+					<td data-label="Phone">0732101694</td>
+					<td data-label="Admin"><i class="fas fa-times"></i></td>
+				</tr>
+				<tr>
+					<td data-label="ID">3</td>
+					<td data-label="Username">OddPants</td>
+					<td data-label="Last Name">Ghenea</td>
+					<td data-label="Email">claudiu.ghenea15@yahoo.ro</td>
+					<td data-label="Phone">0732101694</td>
+					<td data-label="Admin"><i class="fas fa-check"></i></td>
+				</tr>
+				<tr>
+					<td data-label="ID">4</td>
+					<td data-label="Username">OddPants</td>
+					<td data-label="Last Name">Ghenea</td>
+					<td data-label="Email">claudiu.ghenea15@yahoo.ro</td>
+					<td data-label="Phone">0732101694</td>
+					<td data-label="Admin"><i class="fas fa-times"></i></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	
 	</div>
 
-</div>	
+</div>
+
 	
 		<script src="./JS/Login.js"></script>	
 		<script src="./JS/Profile.js"></script>	
@@ -178,8 +226,6 @@
 		<script src="./JS/Classes/DrawClass.js"></script>	
 		<script src="./JS/Drawing.js"></script>	
 
-    
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script src="./JS/Admin.js"></script>	
 
 
