@@ -71,7 +71,6 @@ function recuringLoggedInRequest() {
 function setLoggedInNavbar() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
-			//console.log(this.response);
 
 			var response = JSON.parse(this.responseText);
 
@@ -79,10 +78,7 @@ function setLoggedInNavbar() {
 				var navbarLogin = document.getElementById("hoverMenu");		
 				navbarLogin.innerHTML = response.navbar;
 			}
-
 			window.setInterval(recuringLoggedInRequest , 30000);
-
-
 		}
 	},
 	{
@@ -346,7 +342,6 @@ function sendSignUp(form) {
 	
 	request.onreadystatechange = function() {
 		if(this.readyState == 4 && this.status == 200) {
-			
 			var response = JSON.parse(this.responseText);
 			
 			if(response.statusCode == 200) {
@@ -436,6 +431,7 @@ function _oauthLoginFunction() {
 	
 	if(this.readyState == 4 && this.status == 200) {
 
+		console.log(this.responseText);
 		var response = JSON.parse(this.responseText);
 
 		var messageBox = document.getElementById("signInMessageBox");

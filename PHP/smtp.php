@@ -3,7 +3,7 @@
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\SMTP;
     use PHPMailer\PHPMailer\Exception;
-    require 'C:/xampp/composer/vendor/autoload.php';
+    //require 'C:/xampp/composer/vendor/autoload.php';
 
     function sendNewPassword($newPassword, $name, $email) {
 

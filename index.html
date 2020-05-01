@@ -14,6 +14,8 @@
 	<link rel="stylesheet"  href="./CSS/NewProblem.css">
 	<link rel="stylesheet"  href="./CSS/RichStyleEditor.css">
 	<link rel="stylesheet"  href="./CSS/ProfilePage.css">
+	<link rel="stylesheet" type="text/css" href="./CSS/AdminPage.css">
+	<link rel="stylesheet" href="./CSS/Galery.css">
 
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -23,13 +25,7 @@
       data-auto-a11y="true"
 			
     ></script>
-	
-	
-	<!--
-	https://github.com/j4mie/idiorm
-	https://github.com/PHPMailer/PHPMailer
 
--->
 </head>
 
 <body id="body">
@@ -41,8 +37,8 @@
 				<ul id="navbar-ul">
 					<li><a>   </a></li>
 					<li><a href="#" onclick='changePage("Problems"); return false'>Problems</a></li>				
-					<li><a href="#" onclick="facebookLogout(); return false">Forum</a></li>			
-					<li><a href="#" onclick="googleLogout(); return false">Contact</a></li>			
+					<li><a href="#" onclick="return false">Forum</a></li>			
+					<li><a href="#" onclick='changePage("ContactPage"); return false'>Contact</a></li>			
 					<li id="hoverMenu"><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
 				</ul>
 			</nav>
@@ -214,6 +210,7 @@
 		<script src="./JS/TextEditor.js"></script>	
 		<script src="./JS/Classes/DrawClass.js"></script>	
 		<script src="./JS/Drawing.js"></script>	
+		<script src="./JS/Admin.js"></script>	
 
 		<script src="https://apis.google.com/js/client:platform.js?onload=onLoadGoogleCallback" async defer></script>	
 	

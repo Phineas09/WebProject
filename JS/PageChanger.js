@@ -61,7 +61,7 @@ class PageChanger {
 
 // ! Page history thingy
 
-/*
+
 jQuery(document).ready(function($) {
 
     if (window.history && window.history.pushState) {
@@ -81,7 +81,7 @@ jQuery(document).ready(function($) {
         });
     }
 });
-*/
+
 // Page management part !@!
 
 
@@ -94,8 +94,10 @@ var pageDictionary = {
 	"Home" : pageChangeHome,
 	"Problems" : pageChangeProjects,
 	"NewProblem" : pageChangeNewProblem,
-	"ProfilePage" : pageChangeProfilePage
-
+	"ProfilePage" : pageChangeProfilePage,
+	"AdminUsers" : pageChangeAdminUsers,
+	"AdminStatistics" : pageChangeAdminStatistics,
+	"ContactPage" : pageChangeContactPage
 };
 
 function changePage(page) {
@@ -113,6 +115,41 @@ function pageChangeProfilePage() {
 	return false;
 }
 
+function pageChangeContactPage() {
+
+	pageChanger.page = "ContactPage";
+	pageChanger.changePage();
+	document.getElementById("mainHtml").removeAttribute("theme", "blue");
+	executeAnimationsLoading();
+	return false;
+}
+
+function pageChangeAdminUsers() {
+
+	pageChanger.page = "AdminUsers";
+	pageChanger.changePage();
+
+	document.getElementById("mainHtml").setAttribute("theme", "blue");
+	getUsersTableData();
+
+	return false;
+}
+
+
+function pageChangeAdminStatistics() {
+
+	pageChanger.page = "AdminStatistics";
+	pageChanger.changePage();
+
+	document.getElementById("mainHtml").setAttribute("theme", "blue");
+	
+	getOnlineUsers();
+	drawLineLoggedUsersChart();
+
+
+
+	return false;
+}
 
 function pageChangeProjects() {
 
@@ -123,7 +160,6 @@ function pageChangeProjects() {
 	loadProblemsOptions();
 	loadProblemList();
 	executeAnimationsLoading();
-
 	return false;
 }
 
@@ -165,7 +201,6 @@ function pageChangeHome() {
 	pageChanger.changePage();
 	document.getElementById("mainHtml").removeAttribute("theme", "blue");
 	executeAnimationsLoading();
-	
 }
 
 function searchProblemsSort(pattern, sortBy="author", order="asc") {

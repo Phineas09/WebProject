@@ -1,0 +1,313 @@
+<!doctype html>
+<html id="mainHtml"  lang="en">
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<link rel="stylesheet"	href="./CSS/Themes.css">
+	<link rel="stylesheet"  href="./CSS/Login.css">
+	<link rel="stylesheet"  href="./CSS/Style.css">
+	<link rel="stylesheet"  href="./CSS/Container.css">
+	<link rel="stylesheet"  href="./CSS/Projects.css">
+
+	<link rel="stylesheet"  href="./CSS/NewProblem.css">
+	<link rel="stylesheet"  href="./CSS/RichStyleEditor.css">
+	<link rel="stylesheet"  href="./CSS/ProfilePage.css">
+	<link rel="stylesheet" type="text/css" href="./CSS/AdminPage.css">
+	<link rel="stylesheet" href="./CSS/Galery.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<meta charset="utf-8">
+	<title>MTArena Coding Challanges</title>
+	<script src="https://use.fontawesome.com/releases/v5.12.1/js/all.js"
+      data-auto-a11y="true"
+			
+    ></script>
+
+</head>
+
+<body id="body">
+		<div id="navbarHeader" class="navbarHeader">
+			<h1 id="logo" onclick='changePage("Home"); return false' class="logo">MTARENA</h1>
+			<input type="checkbox" onClick="makeBlurry()" id="nav-toggle" class="nav-toggle">
+
+			<nav id="navbar">
+				<ul id="navbar-ul">
+					<li><a>   </a></li>
+					<li><a href="#" onclick='changePage("Problems"); return false'>Problems</a></li>				
+					<li><a href="#" onclick="facebookLogout(); return false">Forum</a></li>			
+					<li><a href="#" onclick="googleLogout(); return false">Contact</a></li>			
+					<li id="hoverMenu"><a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a></li>			
+				</ul>
+			</nav>
+
+			<label id="nav-toggle-label" for="nav-toggle" class="nav-toggle-label">
+				<span></span>
+			</label>
+		</div>
+	
+	<div class="container" id="container">
+			<div class="form-container sign-up-container" >
+				<form name="SignInForm" onSubmit="return sendSignUp(this);">
+				<a  onClick="popUpLogin(); return false" class="close-button"><i class="fas fa-times"></i></a>
+					<h1>Create Account</h1>
+					<div class="social-container">
+						<a href="#" onClick="facebookLogin(); return false" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" onClick="googlePlusLogin(); return false" class="social"><i class="fab fa-google-plus-g"></i></a>
+					</div>
+					<span>Use your email for registration</span>
+					<input type="text" autocomplete="off" name="name" placeholder="Name" required/>
+					<input type="email" autocomplete="off" name="email" placeholder="Email" required/>
+					<div id="emailSignUpError" class="error-message"></div>
+					<input type="password" minlength="8" name="password" placeholder="Password"  required/>
+					<div id="signUpSuccess" class="info-message">Your account has been created successfully!</div>
+					<button type="submit" name="register">Sign Up</button>
+					<button id="sign-In" class="hidden-button">Sign In</button>
+				</form>
+			</div>
+			<div class="form-container sign-in-container">
+				<form id="SignUpForm" name="SignUpForm" onSubmit="return sendSignIn(this);">
+				<a  onClick="popUpLogin(); return false" class="close-button"><i class="fas fa-times"></i></a>
+					<h1>Sign in</h1>
+					<div class="social-container">
+						<a href="#" onClick="facebookLogin(); return false" class="social"><i class="fab fa-facebook-f"></i></a>
+						<a href="#" onClick="googlePlusLogin(); return false" class="social"><i class="fab fa-google-plus-g"></i></a>
+					</div>
+					<span>Use your account</span>
+					<input type="email" autocomplete="off" name="email" placeholder="Email" required/>
+					<div id="forgotPasswordMessageBox"></div>
+					<input type="password" minlength="8" name="password" placeholder="Password"  required/>
+					<div id="signInMessageBox"></div>
+					<a id="forgotPassword" href="#">Forgot your password?</a>
+					<button type="submit" name="login">Sign In</button>
+					<button id="sign-Up" class="hidden-button">Sign Up</button>
+				</form>
+			</div>	
+			<div class="overlay-container">
+				<div class="overlay">
+					<div class="overlay-panel overlay-left">
+
+						<h1>Welcome Back!</h1>
+						<p>
+							To keep connected with us please login with your personal info
+						</p>
+						<button class="ghost" id="signIn">Sign In</button>
+					</div>
+					<div class="overlay-panel overlay-right">
+						<a class="close-button" onClick="popUpLogin(); return false"><i class="fas fa-times"></i></a>	
+						<h1>Hello!</h1>
+						<p>Enter your personal details and start journey with us</p>
+						<button class="ghost" id="signUp">Sign Up</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+<div id="page-container">
+	<div id="content" class="content">
+
+
+		<div class="gray-container">
+			<div class="content-container">
+				<ul>
+					<li class="module-left gray-item1">
+						<figcaption class="green-container-title">Contact Us</figcaption>	
+					</li>
+					<li class="module-left gray-item2">
+						<figure>
+							<img src="Images/contactus.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Write Us</figcaption>
+							<blockquote>Feel free to write us whenever you like on our email address <b>mtarenaweb@gmail.com</b></blockquote>
+						</figure>
+					</li>
+					
+					<li class="module-middle gray-item3">
+						<figure>
+							<img src="Images/contact_resume.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Apply for a moderator position on our website!</figcaption>
+							<blockquote>We are looking for new developers to be dedicatated to their work and our website.</blockquote>
+						</figure>
+					</li>
+					
+					<li class="module-right gray-item4">
+						<figure>
+							<img src="Images/contact_team.svg" alt="Learning curve pictures" ondragstart="return false" class="selectDisable">
+							<figcaption>Become a partner!</figcaption>
+							<blockquote>If you are a firm interested in new talents this is the best place to start searching.</blockquote>
+						</figure>
+					</li>
+					
+				</ul>
+			</div>
+	    </div>	
+
+        <div class="gray-container">
+			<div class="content-container">
+						<figcaption class="green-container-title">Some pictures from one of our contest!</figcaption>	
+
+                <div class="galeryWarpper">
+                    <div class="row">
+                    <div class="column">
+                        <img src="./Images/Galery/1.JPG" style="width:100%" onclick="openModal();currentSlide(1)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/2.JPG" style="width:100%" onclick="openModal();currentSlide(2)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/3.JPG" style="width:100%" onclick="openModal();currentSlide(3)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/4.JPG" style="width:100%" onclick="openModal();currentSlide(4)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/5.JPG" style="width:100%" onclick="openModal();currentSlide(5)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/6.JPG" style="width:100%" onclick="openModal();currentSlide(6)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/7.JPG" style="width:100%" onclick="openModal();currentSlide(7)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/8.JPG" style="width:100%" onclick="openModal();currentSlide(8)" class="hover-shadow cursor">
+                    </div>
+                    <div class="column">
+                        <img src="./Images/Galery/9.JPG" style="width:100%" onclick="openModal();currentSlide(9)" class="hover-shadow cursor">
+                    </div>
+                    </div>
+                    
+                    <div id="myModal" class="modal">
+                    <span class="close cursor" onclick="closeModal()">&times;</span>
+                    <div class="modal-content">
+                    
+                        <div class="mySlides">
+                            <div class="numbertext">1 / 9</div>
+                            <img src="./Images/Galery/1.JPG" style="width:100%">
+                        </div>
+                    
+                        <div class="mySlides">
+                            <div class="numbertext">2 / 9</div>
+                            <img src="./Images/Galery/2.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">3 / 9</div>
+                            <img src="./Images/Galery/3.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">4 / 9</div>
+                            <img src="./Images/Galery/4.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">5 / 9</div>
+                            <img src="./Images/Galery/5.JPG" style="width:100%">
+                        </div>
+                        
+                        <div class="mySlides">
+                            <div class="numbertext">6 / 9</div>
+                            <img src="./Images/Galery/6.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">7 / 9</div>
+                            <img src="./Images/Galery/7.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">8 / 9</div>
+                            <img src="./Images/Galery/8.JPG" style="width:100%">
+                        </div>
+
+                        <div class="mySlides">
+                            <div class="numbertext">9 / 9</div>
+                            <img src="./Images/Galery/9.JPG" style="width:100%">
+                        </div>
+
+                        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                    
+                        <div class="caption-container">
+                        <p id="caption"></p>
+                        </div>
+                    
+                    
+                        <div class="column">
+                        <img class="demo cursor" src="./Images/Galery/1.JPG" style="width:100%" onclick="currentSlide(1)" alt="Contest Pictures">
+                        </div>
+                        <div class="column">
+                        <img class="demo cursor" src="./Images/Galery/2.JPG" style="width:100%" onclick="currentSlide(2)" alt="Contest Pictures">
+                        </div>
+                        <div class="column">
+                        <img class="demo cursor" src="./Images/Galery/3.JPG" style="width:100%" onclick="currentSlide(3)" alt="Contest Pictures">
+                        </div>
+                        <div class="column">
+                        <img class="demo cursor" src="./Images/Galery/4.JPG" style="width:100%" onclick="currentSlide(4)" alt="Contest Pictures">
+                        </div>
+
+                        <div class="column">
+                            <img class="demo cursor" src="./Images/Galery/5.JPG" style="width:100%" onclick="currentSlide(5)" alt="Contest Pictures">
+                        </div>
+
+                        <div class="column">
+                            <img class="demo cursor" src="./Images/Galery/6.JPG" style="width:100%" onclick="currentSlide(6)" alt="Contest Pictures">
+                        </div>
+
+                        <div class="column">
+                            <img class="demo cursor" src="./Images/Galery/7.JPG" style="width:100%" onclick="currentSlide(7)" alt="Contest Pictures">
+                        </div>
+
+
+                        <div class="column">
+                            <img class="demo cursor" src="./Images/Galery/8.JPG" style="width:100%" onclick="currentSlide(8)" alt="Contest Pictures">
+                        </div>
+
+                        <div class="column">
+                            <img class="demo cursor" src="./Images/Galery/9.JPG" style="width:100%" onclick="currentSlide(9)" alt="Contest Pictures">
+                        </div>
+                    </div>
+                    </div>
+            </div>
+			</div>
+	    </div>	
+
+
+
+	</div>
+
+	<footer id="footer">
+        <div class="footer-container">
+            <div class="content-container">
+                <a href="" onClick="return false">
+                    <img src="Images/" class="logo" alt="logo">
+                </a>
+                <p class="address">MTArena<br><br>Romania</p>
+                <ul class="footer-links">
+                    <li><a href="" onClick="return false">Terms of Service</a></li>
+                    <li><a href="" onClick="return false">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+		<div class="after-footer-container">
+			<div class="content-container">
+			</div>
+		</div>
+    </footer>
+</div>	
+	
+		<script src="./JS/Login.js"></script>	
+		<script src="./JS/Profile.js"></script>	
+		<script src="./JS/Scripts.js"></script>
+		<script src="./JS/PageChanger.js"></script>	
+	
+		<script src="./JS/TextEditor.js"></script>	
+		<script src="./JS/Classes/DrawClass.js"></script>	
+		<script src="./JS/Drawing.js"></script>	
+		<script src="./JS/Admin.js"></script>	
+
+		<script src="https://apis.google.com/js/client:platform.js?onload=onLoadGoogleCallback" async defer></script>	
+	
+</body>
+</html>

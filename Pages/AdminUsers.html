@@ -1,0 +1,217 @@
+
+
+<div class="project-header">
+	<div class="content-container">
+
+		<section>
+			<div class="problems-navigation">
+				<h1>Users </h1>
+				<div class="problemsSearchBarDiv">
+					<input onfocus="this.value = '';" 
+					oninput="adminSearchUser(this.value)" type="text" name="search" 
+					class="problemsSearchBar" placeholder="Search..">
+				</div>
+
+			</div>
+			<p>Welcome to the users edit page!</p>
+			<br>
+			<br>
+		</section>
+	</div> 
+</div>
+
+<div id="adminNavigationCool" data="users" class="profileMenuNav">
+	<ul>
+		<li>
+			<button onclick='changePage("AdminUsers"); return false' class="profileMenuActive">
+				<div class="adminNavigationIconWrapped">
+					<i class="fas fa-users"></i>
+				</div>
+			</button>
+		</li>
+		<li>
+			<button onclick='changePage("AdminStatistics"); return false'>
+				<div class="adminNavigationIconWrapped">
+					<i class="fas fa-chart-pie"></i>
+				</div>
+			</button>
+		</li>
+		<li>
+			<button>
+				<div class="adminNavigationIconWrapped">
+					<i class="fas fa-list-ul"></i>
+				</div>
+			</button>
+		</li>
+	</ul>
+</div>
+
+<div id="mobileAddUserButton" class="addUserButton">
+	<button onclick="adminAddUser(this); return false;" class="saveProfileButton">Add User</button>
+</div>
+
+<div id="userDetails" data="admin" class="userDetails hidden">
+
+	<div class="userDetailsElement">
+		<button onclick="returnToUserTable(this);" class="saveProfileButton" ><i class="fas fa-arrow-circle-left"></i> Go Back</button>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-user"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="username" autocomplete="off" spellcheck="false" value="Unset" required/>
+			<label for="username" class="inputFormated-label">
+				<span class="inputFormated-content">Username</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-signature"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="first_name" autocomplete="off" spellcheck="false" value="Unset" required/>
+			<label for="firstname" class="inputFormated-label">
+				<span class="inputFormated-content">First Name</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-signature"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="last_name" autocomplete="off"  spellcheck="false" value="Unset" required/>
+			<label for="lastname" class="inputFormated-label">
+				<span class="inputFormated-content">Last Name</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-envelope-open-text"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="email" name="email" autocomplete="off" spellcheck="false" value="example@mtarena.ro"/>
+			<label for="email" class="inputFormated-label">
+				<span class="inputFormated-content">Email</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-key"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="password" name="password" autocomplete="off" minlength="8" spellcheck="false" value="Unset" required/>
+			<label for="password" class="inputFormated-label">
+				<span class="inputFormated-content">Password</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-upload"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="can_submit" autocomplete="off" spellcheck="false" value="True"/>
+			<label for="can_submit" class="inputFormated-label">
+				<span class="inputFormated-content">Can Submit</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-edit"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="can_modify" autocomplete="off" spellcheck="false" value="False"/>
+			<label for="can_modify" class="inputFormated-label">
+				<span class="inputFormated-content">Can Modify</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-thumbs-up"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="can_approve" autocomplete="off" spellcheck="false" value="False"/>
+			<label for="can_approve" class="inputFormated-label">
+				<span class="inputFormated-content">Can Approve</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-user-shield"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="is_admin" autocomplete="off" spellcheck="false" value="False"/>
+			<label for="is_admin" class="inputFormated-label">
+				<span class="inputFormated-content">Is Admin</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fas fa-mobile"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="phone_number" autocomplete="off" maxlength="10" spellcheck="false" value="Unset" required/>
+			<label for="phone" class="inputFormated-label">
+				<span class="inputFormated-content">Phone</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<div class="inputIcon">
+			<i class="fab fa-wolf-pack-battalion"></i>
+		</div>
+		<div class="inputFormated">
+			<input type="text" name="title" autocomplete="off" spellcheck="false" value="Rookie"/>
+			<label for="title" class="inputFormated-label">
+				<span class="inputFormated-content">Title</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="userDetailsElement">
+		<button onclick="saveProfileInformation(this); return false" class="saveProfileButton" >Save</button>
+	</div>
+
+</div>
+
+<div id="usersTable" class="usersTable">
+	<table class="usersShowTable">
+		<caption>Users Summary</caption>
+		<thead>
+		<tr>
+			<th scope="col">ID</th>
+			<th scope="col">Username</th>
+			<th scope="col">Last Name</th>
+			<th scope="col">Email</th>
+			<th scope="col">Phone</th>
+			<th scope="col">Admin</th>
+			<th scope="col">Online</th>
+			<th scope="col"><button onclick="adminAddUser(this); return false;" class="formattedButton"><i class="fas fa-plus"></i></button></th>
+		</tr>
+		</thead>
+		<tbody id="usersTableData">
+		
+		</tbody>
+	</table>
+</div>
+	

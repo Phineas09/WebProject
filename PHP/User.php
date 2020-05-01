@@ -43,7 +43,7 @@ class User {
 
         $user = ORM::for_table('users')
         ->where(array(
-            'email' => strtolower($_MyPost->email)
+            'email' => strtolower($email)
         ))
         ->find_one();
         
@@ -61,7 +61,7 @@ class User {
     public static function newUser($name, $method, $oauthId, $email, $password = "", $sendEmail = true) {
         
         $instance = new self();
-        $instance->user = $instance->createNewUser($_MyPost->name, $method, $oauthId, $_MyPost->email, $_MyPost->password);
+        $instance->user = $instance->createNewUser($name, $method, $oauthId, $email, $password);
         $instance->user->save();
         $instance->guest = false;
         $instance->createPrivileges();
@@ -164,7 +164,7 @@ class User {
             <div class="hidden-navbar-ul">
                             <ul>' 
                             . ($this->isAdmin() ? 
-                            '<li><a href="#" onclick="pageChangeProjects(); return false">
+                            '<li><a href="#" onclick=\'changePage("AdminStatistics"); return false\'>
                             <i class="fas fa-lock"></i> Admin</a></li>' 
                                 : '') .
                                 '<li><a href="#" onclick=\'changePage("ProfilePage"); return false\'>
@@ -196,6 +196,9 @@ class User {
             return '';
         }
     }
+
+
+    
 
 
     public function getPageContents($pageName) {

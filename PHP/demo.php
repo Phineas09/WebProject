@@ -12,8 +12,8 @@
 
 
 	ORM::configure('mysql:host=localhost;dbname=mtarena');
-	ORM::configure('username', 'testServer');
-	ORM::configure('password', '0GFCZeZSmOdJ5Oaj');
+	ORM::configure('username', 'root');
+	ORM::configure('password', '');
 
     if(session_id() == '') {
         session_start();
@@ -44,7 +44,7 @@
             name TEXT NOT NULL,
             language TEXT NOT NULL,
             points INTEGER,
-            difficulty TEXT DEFAULT 'easy'
+            difficulty TEXT DEFAULT 'easy',
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             presentation TEXT NOT NULL,
             CONSTRAINT fk_author_id FOREIGN KEY (author) REFERENCES users(id)
@@ -144,50 +144,51 @@
                 SET u.online = if(NOW() - ud.lastAct < 60 , 1, 0);
     ';
 
-// ! To do ProblemsDetails and Problems IO files, pictures and others ????????????
-
-    $db->exec($users . $problems . $problems_solved . $problems_pending . $problems_approvedBy);
+    $db->exec($users);
+    $db->exec($problems);
+    $db->exec($problems_solved);
+    $db->exec($problems_pending);
+    $db->exec($problems_approvedBy);
     $db->exec($logs);
     $db->exec($logs_view);
     $db->exec($privilege);
     $db->exec($user_details);
+    $db->exec('SET GLOBAL event_scheduler="ON";');
+    //$db->exec($eventUsersOnline);
 
     header("Content-Type: application/json");
-    // build a PHP variable from JSON sent using POST method
 
-///!
+//! Work in progress
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_FILES['files']) && (isset($_POST["profileImage"]))) {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_FILES['files']) && (isset($_POST["profileImage"]))) {
+            $path = './../Misc/ProfilePictures/';
+            $extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-        $path = './../Misc/ProfilePictures/';
-        $extensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $user = new User();
 
-        $user = new User();
+            $all_files = count($_FILES['files']['tmp_name']);
 
-        $all_files = count($_FILES['files']['tmp_name']);
+            $file_name = $user->getUserHash();
+            $file_tmp = $_FILES['files']['tmp_name'][0];
+            $file_type = $_FILES['files']['type'][0];
+            $file_size = $_FILES['files']['size'][0];
+            $file_ext = pathinfo($_FILES['files']['name'][0], PATHINFO_EXTENSION);
 
-        $file_name = $user->getUserHash();
-        $file_tmp = $_FILES['files']['tmp_name'][0];
-        $file_type = $_FILES['files']['type'][0];
-        $file_size = $_FILES['files']['size'][0];
-        $file_ext = pathinfo($_FILES['files']['name'][0], PATHINFO_EXTENSION);
+            $file = $path . $file_name; 
 
-        $file = $path . $file_name; 
+            move_uploaded_file($file_tmp, $file);
+            $user->setProfilePicture($file);
 
-        move_uploaded_file($file_tmp, $file);
-        $user->setProfilePicture($file);
+            echo json_encode(
+                array(
+                    'statusCode' => 200
+                ));
 
-        echo json_encode(
-            array(
-                'statusCode' => 200
-            ));
-
-        exit;
+            exit;
+        }
     }
-}
-
 
 //!
 
@@ -404,6 +405,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ));
                 }
 
+            }
+
+            if(isset($_MyPost->usersTable)) {
+
+                $result = ORM::for_table('users')
+                ->inner_join('user_details', 'users.id = user_details.user')
+                ->inner_join('privileges', 'users.id = privileges.user')->find_many();
+
+
+                $dataArray = "";
+
+                if($result) {
+                    foreach($result as $row) {
+                        $dataArray = $dataArray . 
+                        '<tr>
+                        <td data-label="ID">' . $row->id . '</td>
+                        <td data-label="Username">' . $row->name . '</td>
+                        <td data-label="Last Name">' . $row->last_name . '</td>
+                        <td data-label="Email">' . $row->email . '</td>
+                        <td data-label="Phone">' . $row->phone_number . '</td>
+                        <td data-label="Admin">' . ((intval($row->is_admin) == 1) ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>') . '</td>
+                        <td data-label="Online">' . ((intval($row->online) == 1) ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>') . '</td>
+                        <td data-label="Options">
+                            <button onclick="adminEditUser(this); return false;" class="formattedButton"><i class="fas fa-lg fa-edit"></i></button>
+                            <button onclick="adminDeleteUser(this); return false;" class="formattedButton"><i class="fas fa-lg fa-user-minus"></i></button></td>
+                    </tr>';
+                    }   
+                }
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'usersTable' => $dataArray
+                    ));
             }
 
         } 

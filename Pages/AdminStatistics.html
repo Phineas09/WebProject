@@ -1,0 +1,78 @@
+
+<div class="adminNavigation">
+    <ul>
+        <li>
+            <button onclick='changePage("AdminUsers"); return false'>
+                <div class="adminNavigationIconWrapped">
+                    <i class="fas fa-users"></i>
+                </div>
+            </button>
+        </li>
+        <li>
+            <button onclick='changePage("AdminStatistics"); return false' class="profileMenuActive">
+                <div class="adminNavigationIconWrapped">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+            </button>
+        </li>
+        <li>
+            <button>
+                <div class="adminNavigationIconWrapped">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+            </button>
+        </li>
+    </ul>
+</div>
+
+<div id="adminViewGraphs" data="stats" class="adminPageWrapper">
+    <div class="project-header">
+        <div class="content-container">
+
+            <section>
+                <div class="problems-navigation">
+                    <h1>Statistics </h1>
+                </div>
+                <p>Welcome to the statistics page!</p>
+            </section>
+        </div> 
+    </div>
+
+    <div class="usersOnline">
+        <p class="profileStatsTitle">Online Users</p>
+        <p id="onlineUsersDisplay"></p>
+    </div>
+
+
+    <div class="adminCharts">
+        <p class="chartTitle">Users Trends</p>
+        <table class="usersChart">
+            <caption>Number of Logged users for the last two weeks</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Number Of Users</th>
+                </tr>
+            </thead>
+            <tbody id="usersChartData">
+
+                <tr style="height:24%">
+                    <th scope="row">20/05</th>
+                    <td>
+                        <span>6</span>
+                        <div title="<X> Users on <Date>" class="chartTooltip"></div>
+                    </td>
+                </tr>
+                <tr style="height:24%">
+                    <th scope="row">20/05</th>
+                    <td>
+                        <span>6</span>
+                        <div title="<X> Users on <Date>" class="chartTooltip"></div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        
+    </div>
+</div>

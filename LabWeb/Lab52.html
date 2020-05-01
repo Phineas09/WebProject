@@ -1,0 +1,154 @@
+<!doctype html>
+<html id="mainHtml"  lang="en" theme="blue">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ghenea Claudiu-Florentin</title>
+	<link rel="stylesheet"	href="./Lab5.css">
+
+</head>
+
+<style>
+
+.content {
+    height: 250px;
+    width: 250px;
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    grid-template-rows: repeat(4, 60px);
+    
+    grid-gap: 0.2em;
+    padding: 0.2m; 
+    grid-gap : 0.2em;
+}
+
+.element {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+}
+
+
+</style>
+
+<body id="body">
+
+    <div class="content">
+
+        <div poz="0" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="1" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="2" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="3" class="element">
+            <img src="./Images/ball.png">
+        </div>
+
+
+        <div poz="4" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="5" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="6" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="7"  class="element">
+            <img src="./Images/ball.png">
+        </div>
+
+
+        <div poz="8" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="9" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="10" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="11" class="element">
+            <img src="./Images/ball.png">
+        </div>
+
+
+        <div poz="12" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="13" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="14" class="element">
+            <img src="./Images/ball.png">
+        </div>
+        <div poz="15" class="element">
+            <img src="./Images/ball.png">
+        </div>
+
+    </div>  
+    
+
+<script>
+
+var matrix = [
+    0, 1, 0, 0,
+    1, 0, 0, 1,
+    0, 1, 0, 0,
+    0, 0, 0, 1 ];
+
+var elements = document.getElementsByClassName("element");
+
+for(let elem of elements) {
+    let pozition = parseInt(elem.getAttribute("poz"));
+    if(matrix[pozition] == 1) {
+        elem.onclick = isBomb;
+    }
+    else{
+        elem.onclick = notBomb;
+    }
+}
+
+function isBomb(event) {
+
+    alert("Game Over!");
+    location.reload();
+}
+
+function notBomb(event) {
+
+    let element = event.target.parentElement;
+    let pozition = parseInt(element.getAttribute("poz"));
+    element.innerHTML = String(
+        getElement(pozition-5) +  getElement(pozition-4) +
+        getElement(pozition-3) +  getElement(pozition-1) +
+        getElement(pozition+1) +  getElement(pozition+3) + 
+        getElement(pozition+4) + getElement(pozition+5));
+    matrix[pozition] = -1;
+    hasWon();
+}
+
+function hasWon() {
+    for(let elem of matrix) {
+        if(elem == 0)
+        return;
+    }
+    alert("Game Won!");
+}
+
+function getElement(index) {
+    if(index < 0 || index > 15) {
+        return 0;
+    }
+    if(matrix[index] == -1)
+        return 0;
+    return matrix[index];
+}
+
+</script>	
+</body>
+</html>
