@@ -232,14 +232,14 @@
             <p>*Upload your test cases and solution!</p>
             <form class="newProblemUpload" action="/action_page.php">
                 <label for="files">Source File:</label>
-                <input type="file" id="files" name="sourceFile"><br><br>
+                <input type="file" id="sourceFile" name="sourceFile"><br><br>
                 <label for="files">Test Cases:</label>
-                <input type="file" id="files" name="testFiles" multiple><br><br>
+                <input type="file" id="testFiles" name="testFiles" multiple><br><br>
             </form> 
         </section>
     </div> 
 </div>
 
 <div class="content-container">
-    <a id="getStartedButton" href="" onclick="submitNewProblem(); return false" class="submitNewProblemButton" >Submit Problem</a>
+    <button id="getStartedButton" onclick="submitNewProblem(); return false" class="submitNewProblemButton" >Submit Problem</button>
 </div>

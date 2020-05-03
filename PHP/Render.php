@@ -72,14 +72,56 @@ class Render {
         return $profilePage;
     }
 
+    static private function renderAdminUserDetails($user) {
+
+        $userDetails = self::readElementToRender("AdminUsersDetails");
+
+        $userDetails = str_replace("ReplaceTitle", $user->getTitle(),$userDetails);
+        $userDetails = str_replace("ReplaceUsername", $user->getUsername(),$userDetails);
+        $userDetails = str_replace("ReplaceEmail", $user->getEmailAddress(),$userDetails);
+        $userDetails = str_replace("ReplaceFirstName", $user->getFirstName(),$userDetails);
+        $userDetails = str_replace("ReplaceLastName", $user->getLastName(),$userDetails);
+        $userDetails = str_replace("ReplacePhone", $user->getPhone(),$userDetails);
+
+        $userDetails = str_replace("ReplaceUserId", $user->getId(),$userDetails);
+
+        $userDetails = str_replace("ReplaceCanModify", $user->getPrivCanModify(),$userDetails);
+        $userDetails = str_replace("ReplaceCanApprove", $user->getPrivCanApprove(),$userDetails);
+        $userDetails = str_replace("ReplaceIsAdmin", $user->getPrivIsAdmin(),$userDetails);
+
+        return $userDetails;
+    }
+
+    static private function renderAdminUserDetailsNew() {
+
+        $userDetails = self::readElementToRender("AdminUsersDetails");
+
+        $userDetails = str_replace("ReplaceTitle", "Rookie", $userDetails);
+        $userDetails = str_replace("ReplaceUsername", "Unset", $userDetails);
+        $userDetails = str_replace("ReplaceEmail", "example@mtarena.ro", $userDetails);
+        $userDetails = str_replace("ReplaceFirstName", "Unset", $userDetails);
+        $userDetails = str_replace("ReplaceLastName", "Unset", $userDetails);
+        $userDetails = str_replace("ReplacePhone", "Unset", $userDetails);
+        $userDetails = str_replace("ReplaceCanModify", "False", $userDetails);
+        $userDetails = str_replace("ReplaceCanApprove", "False", $userDetails);
+        $userDetails = str_replace("ReplaceIsAdmin", "False", $userDetails);
+        $userDetails = str_replace("ReplaceUserId", "-1", $userDetails);
+
+        return $userDetails;
+    }
+
 
     static public function renderPageContents($user, $pageName) {
 
         if(strcasecmp  ( $pageName, "profilepage") == 0) {
             return self::renderProfilePage($user);
         }
-
-
+        if(strcasecmp  ( $pageName, "AdminUsersDetails") == 0) {
+            return self::renderAdminUserDetails($user);
+        }
+        if(strcasecmp  ( $pageName, "AdminUsersDetailsNew") == 0) {
+            return self::renderAdminUserDetailsNew();
+        }
     }
 
 

@@ -280,10 +280,10 @@
     color: var(--themeSecondary) !important;
 }
 
-.fa-check,  .fa-edit {
+.usersShowTable .fa-check, .usersShowTable .fa-edit {
     color:green;
 }
-.fa-times, .fa-user-minus {
+.usersShowTable .fa-times, .usersShowTable .fa-user-minus {
     color:red;
 }
 

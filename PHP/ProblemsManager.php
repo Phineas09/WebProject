@@ -56,11 +56,11 @@ class ProblemsManager
             '<div tabindex="-1" class="project-element ' . $hidden . '">
                 <a class="project-hidden">' . $problem->id . '</a>
                 <div id="projectName" class="project-brief ' . $problem->difficulty . '">
-                <p>' . $problem->name . ' </p>
+                    <p>' . $problem->name . ' </p>
                 </div>
                 <p id="projectAuthor" class="project-author">' . $user->name . '</p>
                 <div class="project-view-div">
-                    <button class="project-view-button">View Project</button>
+                    <button onclick="viewProblem(this);" class="project-view-button">View Project</button>
                 </div>
             </div>
             <div class="projectDetails">
@@ -89,6 +89,15 @@ class ProblemsManager
         return $this->_queryFor("problems", array('approved' => 0));
     }
 
+    public function getProblemData($problemId) {
+
+        $filename = "../Misc/Problems/" . $problemId . "/problemData";
+        $problemData = file_get_contents($filename);
+        if(!file_exists($filename))
+            throw new Exception("Given problem does not have body!");
+        return $problemData;
+    }
+
     public function getSolvedProblems() {
 
         if (isset($_COOKIE['LoggedUser'])) {
@@ -111,6 +120,15 @@ class ProblemsManager
 
         }
         return NULL;
+    }
+
+    public function getProblemName($problemId) {
+
+        $result = ORM::for_table("problems")->where(array("id" => $problemId))->find_one();
+        if($result) {
+            return $result->name;
+        }
+        return "Undefined";
     }
 
     public function getProblemsPageContentsSearchBy(string $pattern, string $sortBy = "name", string $order = "asc") {

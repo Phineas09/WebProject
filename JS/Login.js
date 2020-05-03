@@ -56,7 +56,6 @@ function getCookie(cname) {
   return "";
 }
 
-
 function recuringLoggedInRequest() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
@@ -71,14 +70,16 @@ function recuringLoggedInRequest() {
 function setLoggedInNavbar() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
-
 			var response = JSON.parse(this.responseText);
 
 			if(response.statusCode == 200) {
 				var navbarLogin = document.getElementById("hoverMenu");		
 				navbarLogin.innerHTML = response.navbar;
+				window.setInterval(recuringLoggedInRequest , 30000);
 			}
-			window.setInterval(recuringLoggedInRequest , 30000);
+			else if(response.statusCode == 210) {
+				logOut(true);
+			} 
 		}
 	},
 	{
@@ -92,9 +93,7 @@ function setLoggedOutNavbar() {
 	window.clearInterval();
 	var navbarLi = document.getElementById("hoverMenu");
 	navbarLi.innerHTML = '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
-
 }
-
 
 function checkIsLogged() {
 	
@@ -451,7 +450,6 @@ function facebookLoginRequest() {                      // Test
 		//Send to the server informations about the user if exists just set Cookie and change navbar else register user and same thing
 		var messageBox = document.getElementById("signInMessageBox");
 		messageBox.className = "";
-		
 		makeHttpRequest(
 			_oauthLoginFunction,
 			{

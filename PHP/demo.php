@@ -9,7 +9,7 @@
     require_once("./ProblemsManager.php");
     require_once('./User.php');
     require_once('./Render.php');
-
+    require_once('./FileUploader.php');
 
 	ORM::configure('mysql:host=localhost;dbname=mtarena');
 	ORM::configure('username', 'root');
@@ -46,7 +46,8 @@
             points INTEGER,
             difficulty TEXT DEFAULT 'easy',
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            presentation TEXT NOT NULL,
+            presentation TEXT,
+            testCases INTEGER DEFAULT 0,
             CONSTRAINT fk_author_id FOREIGN KEY (author) REFERENCES users(id)
     );";
 
@@ -188,6 +189,41 @@
 
             exit;
         }
+
+        if ((isset($_POST["submitProblem"]))) {
+            FileUploader::submitProblem();
+
+            //run program compile make output and delete exe
+        }
+
+        if(isset($_POST["problemsManager"]) && isset($_POST["modifyProblem"])) {
+
+            try {
+                if(isset($_FILES['testFiles'])) {
+                    FileUploader::appendFilesToProblem();
+                } 
+                else {
+                    if(isset($_FILES['sourceFile'])) {
+                        FileUploader::appendSourceFileToProblem();
+                    }
+                    FileUploader::updateProblemFormData();  // Change Name   
+                }
+
+                //rerun compile and make outputFiles
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+            }
+            catch (Exception $e) {
+                echo json_encode(
+                    array(
+                        'statusCode' => 420
+                    ));
+            }
+            exit;
+        }
     }
 
 //!
@@ -226,6 +262,41 @@
                     'statusCode' => 420
                 ));
         }
+        exit;
+
+    }
+
+    if(isset($_MyPost->problemsManager)) {
+        try {
+
+
+            if(isset($_MyPost->downloadInputArhive)) {
+
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'arhivePath' => FileUploader::makeArhiveFile($_MyPost->problemId)
+                    ));
+
+                exit;
+            }
+
+            echo json_encode(
+                array(
+                    'statusCode' => 200,
+                    'problemData' => $problemManager->getProblemData($_MyPost->problemId),
+                    'problemName' => $problemManager->getProblemName($_MyPost->problemId)
+                ));
+        } 
+        catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'statusCode' => 413,
+                    'Caught exception: ' => $e->getMessage()
+                ));
+        }
+
         exit;
 
     }
@@ -292,12 +363,21 @@
     if(isset($_MyPost->user)) {
         try {
         if(isset($_MyPost->loginBar)) {
+            try {
                 $user = new User();
                 echo json_encode(
                     array(
                         'statusCode' => 200,
                         'navbar' => $user->getUserNavbar()
                     ));
+                }
+                catch (Exception $e) {
+                    echo json_encode(
+                        array(
+                            'statusCode' => 210,
+                            'navbar' => '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>'
+                        ));
+                }
         } 
         if(isset($_MyPost->problemsOptions)) {
             $user = new User();
@@ -358,6 +438,72 @@
         exit;
     }
 
+    //! Split those in admin and other class ?
+
+    if(isset($_MyPost->admin)) {
+        try {
+            if(isset($_MyPost->userDetails)) {
+
+                if(isset($_MyPost->userId)) {
+                    $user = User::byId($_MyPost->userId);
+                    $data = Render::renderPageContents($user, "AdminUsersDetails");
+                }
+                else {
+                    $data = Render::renderPageContents(null, "AdminUsersDetailsNew");
+                }
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'userDetails' => $data
+                    ));
+            }
+
+            if(isset($_MyPost->changeDetails)) {
+
+                $user = User::byId($_MyPost->userId);
+                $user->adminUpdateDetails($_MyPost);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+            }
+
+            if(isset($_MyPost->addUser)) {
+
+                $user = User::newUser($_MyPost->username, "Default", "", $_MyPost->email, $_MyPost->password);
+                $user->adminUpdateDetails($_MyPost);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+            }
+
+            if(isset($_MyPost->deleteUser)) {
+
+                $user = new User();
+                
+                if(intval($user->getId()) != intval($_MyPost->userId)) {
+                    User::deleteUser($user->getId(), intval($_MyPost->userId));
+                }
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+            }
+        }
+        catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'statusCode' => 404,
+                    'Caught exception: ' => $e->getMessage()
+                ));
+        }
+    exit;
+
+    }
 
     if(isset($_MyPost->stats)) {
 
@@ -404,15 +550,30 @@
                             'online' => $result
                         ));
                 }
+                else {
+                    echo json_encode(
+                        array(
+                            'statusCode' => 200,
+                            'online' => 0
+                        ));  
+                }
 
             }
 
             if(isset($_MyPost->usersTable)) {
 
-                $result = ORM::for_table('users')
-                ->inner_join('user_details', 'users.id = user_details.user')
-                ->inner_join('privileges', 'users.id = privileges.user')->find_many();
-
+                if(isset($_MyPost->pattern)) {
+                    $result =  ORM::for_table('users')
+                    ->inner_join('user_details', 'users.id = user_details.user')
+                    ->inner_join('privileges', 'users.id = privileges.user')
+                    ->where_like('user_details.last_name', '%' . $_MyPost->pattern .'%')
+                    ->find_many();
+                }
+                else {
+                    $result = ORM::for_table('users')
+                    ->inner_join('user_details', 'users.id = user_details.user')
+                    ->inner_join('privileges', 'users.id = privileges.user')->find_many();
+                }
 
                 $dataArray = "";
 
@@ -451,16 +612,5 @@
         }
         exit;
     }
-
-
-
-
-
-
-
-
-
-
-
 
 

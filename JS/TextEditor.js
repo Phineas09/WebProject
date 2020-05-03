@@ -11,6 +11,8 @@ function iFramePipeReceive(event) {
     (document.getElementById(event.data.frameOrigin).style.height=
     `${event.data.frameHeight+30}px`);
 
+
+    //!!!! If has preview tag don't do nothign
     if(event.data.hasOwnProperty("frameElement")) {
         openiFrame(event.data.frameElement);
     }
@@ -22,6 +24,9 @@ function iFramePipeReceive(event) {
 
 function openiFrame(frameElement) {
     var iFrame = document.getElementById(frameElement);
+
+    if(iFrame.hasAttribute("previewOnly"))
+        return;
 
     if(activeiFrame) {
         closeiFrame();
@@ -187,7 +192,7 @@ function hideMenu(e) {
 
 //! Render functions part !@#!@
 
-function renderElementAddToDom(parentElement, elementClass, innerHTML) {
+function renderElementAddToDom(parentElement, elementClass, innerHTML, async) {
 
     var element = document.createElement("div");
     element.classList.add(elementClass);
@@ -203,34 +208,347 @@ function renderElementAddToDom(parentElement, elementClass, innerHTML) {
         setTimeout(function () {
             formatiFrames();
         }, 100);
-        renderNode(element, "textEditorAddCell");
+        renderNode(element, "textEditorAddCell", async);
     }
 
     if(elementClass === "drawEditor") {
         formatDrawElements();
-        renderNode(element, "textEditorAddCell");
+        renderNode(element, "textEditorAddCell", async);
     }
 }
 
-function maskElementPassing(requestResponse, parentElement, elementClass) {
+function maskElementPassing(requestResponse, parentElement, elementClass, async) {
     if(requestResponse.readyState == 4 && requestResponse.status == 200) {
 
         var response = JSON.parse(requestResponse.responseText);
         if(response.statusCode == 200) {
 
-            renderElementAddToDom(parentElement, elementClass, response.elementInner);
+            renderElementAddToDom(parentElement, elementClass, response.elementInner, async);
         }
     }
 }
 
-function renderNode(parentElement, nodeClass) {
+function renderNode(parentElement, nodeClass, async = true) {
 
     makeHttpRequest( function() {
-        maskElementPassing(this, parentElement, nodeClass); },
+        maskElementPassing(this, parentElement, nodeClass, async); },
     {
         "renderElement" : true,
         "element" : nodeClass
+    },
+        "/PHP/demo.php",
+        async
+    );
+}
+
+
+//* Place for problem save
+
+function getEditorsData(contentContainer) {
+    problemData = {};
+    problemData["editors"] = [];
+
+    let minCaracters = 0;
+
+    for(let child of contentContainer.childNodes) {
+        if(child.classList) {
+            if(child.classList.contains("drawEditor")) {
+                let canvasData = {};
+                let canvas = child.getElementsByTagName("canvas")[0];
+                console.log(canvas);
+                canvasData["editor"] = "drawEditor";
+                canvasData["height"] = canvas.paint.editorHeight;
+                canvasData["content"] = canvas.paint.editorContent;
+                problemData["editors"].push(canvasData);
+            }
+            if(child.classList.contains("textEditor")) {
+                let frameData = {};
+                let frame = child.getElementsByTagName("iframe")[0];
+                console.log(frame);
+                frameData["editor"] = "textEditor";
+                frameData["content"] = frame.contentDocument.getElementsByTagName("body")[0].innerHTML;
+                minCaracters = minCaracters + frameData["content"].length;
+                problemData["editors"].push(frameData);
+            }
+        }
+    }
+    return problemData;
+}
+
+function submitNewProblem() {
+
+    var contentContainer = document.getElementById("content");
+    let problemName = document.getElementById("problem_Name").value;
+
+    if(!problemName) {
+        //!error
+        return;
+    }
+
+    //Get the drawing and text sequentially
+
+    if(minCaracters < 200) {
+        //! Error not enough caracters
+    }
+
+    let formData = new FormData();
+
+    let problemData = getEditorsData(contentContainer);
+
+    formData.append('problemData', JSON.stringify(problemData));
+    formData.append('title', problemName);
+
+    //Append files 
+
+    let sourceFile = document.getElementById("sourceFile").files;
+    let testFiles = document.getElementById("testFiles").files;
+
+    if(sourceFile.length == 0 || testFiles.length == 0) {
+        //! Error 
+        return;
+    }
+
+    formData.append('sourceFile', sourceFile[0]);
+    
+    for (let file of testFiles) {
+        formData.append('testFiles[]', file);
+    }
+
+    formData.append('submitProblem', 'true');
+
+    var request = new XMLHttpRequest();
+	request.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                console.log("Done?");
+            }
+        }
+    };
+    
+	request.open('POST', '/PHP/demo.php');
+	request.send(formData);
+
+    return false;
+}
+
+function _getLastDomElement(className) {
+
+    let element = document.getElementsByClassName(className);
+    element = element[element.length - 1];
+    return element;
+}
+
+function loadElementsViewProblem(problemData, problemName) {
+
+    problemData = problemData.editors;
+
+    let addElement = _getLastDomElement("textEditorAddCell");
+
+    let problemNameInput = document.getElementById("problem_Name");
+    problemNameInput.value = problemName;
+
+    for(let editor of problemData) {
+        if(editor["editor"] == "drawEditor") {
+            renderNode(addElement, "drawEditor", false);
+            let canvas = _getLastDomElement("drawEditor");
+            canvas = canvas.childNodes[2];
+            canvas.paint.canvasHeight = editor["height"];
+            canvas.paint.editorContent = editor["content"];
+            canvas.setAttribute("previewOnly", "true");
+        }
+        if(editor["editor"] == "textEditor") {
+            renderNode(addElement, "textEditor", false);
+            let textEditor = _getLastDomElement("textEditor");
+            textEditor = textEditor.childNodes[2];
+            textEditor.contentDocument.getElementsByTagName("body")[0].innerHTML = editor["content"];
+            textEditor.setAttribute("previewOnly", "true");
+        }
+
+        addElement = _getLastDomElement("textEditorAddCell");
+        addElement.classList.add("hidden");
+    }
+}
+
+function loadViewProblem() {
+	if(this.readyState == 4 && this.status == 200) {
+        var response = JSON.parse(this.responseText);
+		if(response.statusCode == 200) {
+            //Problem Data parse
+            var problemData = JSON.parse(response.problemData);
+            loadElementsViewProblem(problemData, response.problemName);
+		}
+	}
+}
+
+var problemEditId = null;
+
+function viewProblem(viewProjectButton, projectGiven = -1) {
+
+    let projectId = 0;
+    if(projectGiven == -1) {
+        projectId = viewProjectButton.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
+    }
+    else 
+        projectId = projectGiven;
+
+    problemEditId = projectId;
+
+    changePage("ViewProblem");
+    //Make request to get problems info
+
+    makeHttpRequest( loadViewProblem,
+    {
+        "problemsManager" : true,
+        "problemId" : projectId
     }
     );
 }
 
+function editProblem(publisher) {
+
+    publisher.classList.add("hidden");
+    publisher.nextElementSibling.classList.remove("hidden");
+
+    let problemNameInput = document.getElementById("problem_Name");
+    problemNameInput.removeAttribute("disabled");
+    let addCells = document.getElementsByClassName("textEditorAddCell");
+
+    for(let addCell of addCells) {
+        addCell.classList.remove("hidden");
+    }
+
+    let textEditors = document.getElementsByClassName("textEditor");
+
+    for(let editor of textEditors) {
+        let textEditor = editor.childNodes[2];
+        textEditor.removeAttribute("previewOnly");
+    }
+
+
+    let drawEditors = document.getElementsByClassName("drawEditor");
+
+    for(let editor of drawEditors) {
+        let drawEditor = editor.childNodes[2];
+        drawEditor.removeAttribute("previewOnly");
+    }
+
+    //Do something about thing down  
+
+    document.getElementById("projectViewEdit").classList.remove("hidden");
+    document.getElementById("projectViewPrev").classList.add("hidden");
+    document.getElementById("modifyProblem").parentElement.classList.remove("hidden");
+    document.getElementById("submitSolution").parentElement.classList.add("hidden");
+
+}
+
+function cancelEdit(publisher) {
+    //Cancel edit and revert changes 
+    if(confirm("Canceling edit will revert any changes!")) {
+        viewProblem(null, problemEditId);
+        historyStack.pop();
+
+
+    }
+}
+
+async function downloadInputFilesForProblem() {
+    let problemId = problemEditId;
+    makeHttpRequest( function () {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);   
+            if(response.statusCode == 200) {
+                let anchor = document.createElement('a');
+                anchor.href =response.arhivePath;
+                anchor.setAttribute("download", "");
+                anchor.click();
+            }
+        }
+    },
+    {
+        "problemsManager" : true,
+        "downloadInputArhive" : true,
+        "problemId" : problemId
+    },
+        "/PHP/demo.php",
+        false
+    );
+}
+
+function downloadProblemFiles(event) {
+    event.preventDefault();
+    downloadInputFilesForProblem();
+}
+
+function submitModifyProblem() {
+
+    let overwrite = document.getElementById("appendToExisting").checked;
+
+    var contentContainer = document.getElementById("content");
+    let problemName = document.getElementById("problem_Name").value;
+
+    if(!problemName) {
+        //!error
+        return;
+    }
+
+    let formData = new FormData();
+
+    let problemData = getEditorsData(contentContainer);
+    
+    formData.append('problemData', JSON.stringify(problemData));
+    formData.append('title', problemName);
+    //Problem Id
+    formData.append('problemId', problemEditId);
+
+    if(overwrite)
+        formData.append("overwrite", overwrite);
+
+    let sourceFile = document.getElementById("editSourceFile").files;
+    let testFiles = document.getElementById("testFiles").files;
+
+    if(sourceFile.length != 0)
+        formData.append('sourceFile', sourceFile[0]);
+    
+    if(testFiles.length != 0) {
+        for (let file of testFiles) {
+            formData.append('testFiles[]', file);
+        }
+    }
+
+    formData.append('modifyProblem', 'true');
+    formData.append('problemsManager', 'true');
+
+    var request = new XMLHttpRequest();
+	request.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                document.getElementById("modifyProblem").classList.add("successButton");
+            }
+        }
+    };
+    
+	request.open('POST', '/PHP/demo.php');
+	request.send(formData);
+
+    return false;
+}
+
+
+function submitSolution() {
+
+    let sourceFile = document.getElementById("sourceFile").files;
+
+    let formData = new FormData();
+
+    if(sourceFile.length != 0)
+        formData.append('sourceFile', sourceFile[0]);
+
+    //send File to server and wait for responses
+    //Compiler, show and log somewhere the tests that passed and not
+
+}

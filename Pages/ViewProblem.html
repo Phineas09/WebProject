@@ -1,0 +1,70 @@
+
+<div class="project-header">
+    <div class="content-container">
+
+        <section>
+            <div class="problems-navigation">
+                <h1>Submit your solution</h1>
+
+                <!-- Only if it's his own problem or can mofidy-->
+                <button id="viewProblemModify" onclick="editProblem(this); return false" class="submitNewProblemButton" >Modify</button>
+                <button id="viewProblemCancel" onclick="cancelEdit(); return false" class="submitNewProblemButton hidden" >Cancel</button>
+                <!--<a href="/Misc/Problems/2/Inputs/in0.txt" download="filename" >Download link</a>-->
+            </div>
+            <p>Let your imagination flow and come up with an inventive way to solve this problem.</p>
+        </section>
+    </div> 
+</div>
+
+<div class="newProblem">
+    <input id="problem_Name" class="inputText" type="text" autocomplete="off" disabled placeholder="Give your problem a name"/>
+</div>
+
+<div class="textEditorAddCell hidden">
+    <div class="textEditorAddCellButtons">
+        <button onclick='renderNode(this.parentElement.parentElement, "textEditor");'><i class="fas fa-plus-square"></i> Code</button>
+        <button onclick='renderNode(this.parentElement.parentElement, "drawEditor");'><i class="fas fa-plus-square"></i>	Drawing</button>
+    </div>
+    <hr>
+</div>
+
+<div id="projectViewPrev" class="project-header project-header-formatted">
+    <div class="content-container">
+        <section>
+            <p>*Upload your solution!</p>
+            <form class="newProblemUpload" action="/action_page.php">
+                <label for="files">Source File:</label>
+                <input type="file" id="sourceFile" name="sourceFile"><br><br>
+            </form> 
+        </section>
+    </div> 
+</div>
+
+
+<div id="projectViewEdit" class="project-header project-header-formatted hidden">
+    <div class="content-container">
+        <section>
+            <p>Input Files</p>
+            <form class="newProblemUpload" action="/action_page.php">
+                <label><a class="downloadInputFiles" onclick="downloadProblemFiles(event)" >Download Input Files</a></label>
+
+                <label for="testFiles">New Input Files:</label>
+                <input type="file" id="testFiles" name="testFiles" multiple><br><br>
+
+                <label for="sourceFile">New Source File</label>
+                <input type="file" id="editSourceFile" name="sourceFile"><br><br>
+                                
+                <label for="appendToExisting">Overwrite existing ?</label><br>
+                <input type="checkbox" id="appendToExisting" name="appendToExisting" value=""><br><br>
+            </form> 
+        </section>
+    </div> 
+</div>
+
+<div class="content-container hidden">
+    <button id="modifyProblem" onclick="submitModifyProblem(); return false" class="submitNewProblemButton" >Commit Edits</button>
+</div>
+
+<div class="content-container">
+    <button id="submitSolution" onclick="submitSolution(); return false" class="submitNewProblemButton" >Submit Solution</button>
+</div>

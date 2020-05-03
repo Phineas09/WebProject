@@ -97,7 +97,8 @@ var pageDictionary = {
 	"ProfilePage" : pageChangeProfilePage,
 	"AdminUsers" : pageChangeAdminUsers,
 	"AdminStatistics" : pageChangeAdminStatistics,
-	"ContactPage" : pageChangeContactPage
+	"ContactPage" : pageChangeContactPage,
+	"ViewProblem" : pageChangeViewProblem
 };
 
 function changePage(page) {
@@ -112,6 +113,18 @@ function pageChangeProfilePage() {
 	pageChanger.changePage(true);
 	document.getElementById("mainHtml").setAttribute("theme", "blue");
 	
+	return false;
+}
+
+function pageChangeViewProblem() {
+
+	pageChanger.page = "ViewProblem";
+	pageChanger.changePage();
+
+/*	setTimeout(function () {
+		formatEditorElements();
+	}, 200);
+*/
 	return false;
 }
 

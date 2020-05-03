@@ -1,10 +1,15 @@
+<div class="userDetailsElement">
+    <button onclick="returnToUserTable(this);" class="saveProfileButton" ><i class="fas fa-arrow-circle-left"></i> Go Back</button>
+</div>
+
+<input class="hidden" type="text" name="userId" autocomplete="off" spellcheck="false" value="ReplaceUserId" required/>
 
 <div class="userDetailsElement">
     <div class="inputIcon">
         <i class="fas fa-user"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="username" autocomplete="off" spellcheck="false" value="Unset" required/>
+        <input type="text" name="username" autocomplete="off" spellcheck="false" value="ReplaceUsername" required/>
         <label for="username" class="inputFormated-label">
             <span class="inputFormated-content">Username</span>
         </label>
@@ -16,7 +21,7 @@
         <i class="fas fa-signature"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="first_name" autocomplete="off" spellcheck="false" value="Unset" required/>
+        <input type="text" name="first_name" autocomplete="off" spellcheck="false" value="ReplaceFirstName" required/>
         <label for="firstname" class="inputFormated-label">
             <span class="inputFormated-content">First Name</span>
         </label>
@@ -28,7 +33,7 @@
         <i class="fas fa-signature"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="last_name" autocomplete="off"  spellcheck="false" value="Unset" required/>
+        <input type="text" name="last_name" autocomplete="off"  spellcheck="false" value="ReplaceLastName" required/>
         <label for="lastname" class="inputFormated-label">
             <span class="inputFormated-content">Last Name</span>
         </label>
@@ -40,7 +45,7 @@
         <i class="fas fa-envelope-open-text"></i>
     </div>
     <div class="inputFormated">
-        <input type="email" name="email" autocomplete="off" spellcheck="false" value="example@mtarena.ro"/>
+        <input type="email" name="email" autocomplete="off" spellcheck="false" value="ReplaceEmail"/>
         <label for="email" class="inputFormated-label">
             <span class="inputFormated-content">Email</span>
         </label>
@@ -61,22 +66,10 @@
 
 <div class="userDetailsElement">
     <div class="inputIcon">
-        <i class="fas fa-upload"></i>
-    </div>
-    <div class="inputFormated">
-        <input type="text" name="can_submit" autocomplete="off" spellcheck="false" value="True"/>
-        <label for="can_submit" class="inputFormated-label">
-            <span class="inputFormated-content">Can Submit</span>
-        </label>
-    </div>
-</div>
-
-<div class="userDetailsElement">
-    <div class="inputIcon">
         <i class="fas fa-edit"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="can_modify" autocomplete="off" spellcheck="false" value="False"/>
+        <input type="text" name="can_modify" autocomplete="off" spellcheck="false" value="ReplaceCanModify"/>
         <label for="can_modify" class="inputFormated-label">
             <span class="inputFormated-content">Can Modify</span>
         </label>
@@ -88,7 +81,7 @@
         <i class="fas fa-thumbs-up"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="can_approve" autocomplete="off" spellcheck="false" value="False"/>
+        <input type="text" name="can_approve" autocomplete="off" spellcheck="false" value="ReplaceCanApprove"/>
         <label for="can_approve" class="inputFormated-label">
             <span class="inputFormated-content">Can Approve</span>
         </label>
@@ -100,7 +93,7 @@
         <i class="fas fa-user-shield"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="is_admin" autocomplete="off" spellcheck="false" value="False"/>
+        <input type="text" name="is_admin" autocomplete="off" spellcheck="false" value="ReplaceIsAdmin"/>
         <label for="is_admin" class="inputFormated-label">
             <span class="inputFormated-content">Is Admin</span>
         </label>
@@ -112,7 +105,7 @@
         <i class="fas fa-mobile"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="phone_number" autocomplete="off" maxlength="10" spellcheck="false" value="Unset" required/>
+        <input type="text" name="phone_number" autocomplete="off" maxlength="10" spellcheck="false" value="ReplacePhone" required/>
         <label for="phone" class="inputFormated-label">
             <span class="inputFormated-content">Phone</span>
         </label>
@@ -124,7 +117,7 @@
         <i class="fab fa-wolf-pack-battalion"></i>
     </div>
     <div class="inputFormated">
-        <input type="text" name="title" autocomplete="off" spellcheck="false" value="Rookie"/>
+        <input type="text" name="title" autocomplete="off" spellcheck="false" value="ReplaceTitle"/>
         <label for="title" class="inputFormated-label">
             <span class="inputFormated-content">Title</span>
         </label>
@@ -132,5 +125,5 @@
 </div>
 
 <div class="userDetailsElement">
-    <button onclick="saveProfileInformation(this); return false" class="saveProfileButton" >Save</button>
+    <button name="showStatus" onclick="adminSaveUser(this); return false" class="saveProfileButton" >Save</button>
 </div>

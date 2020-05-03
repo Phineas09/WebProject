@@ -320,11 +320,11 @@
 }
 
 .errorButton {
-    background: var(--error);
+    background: var(--error) !important;
 }
 
 .successButton {
-    background: var(--success);
+    background: var(--success) !important;
 }
 
 .hidden {

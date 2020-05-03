@@ -33,7 +33,35 @@ class Paint {
         this.color = color;
         this.context.strokeStyle = this.color;
     }
+
+    set canvasHeight(height) {
+        let element = $('#' + this.canvas.id);
+        element.height(height);
+        this.setCanvasScale();
+    }
+
+    set editorContent(content) {
+        //Some black magic trick
+        var img = new Image();
+        img.contextCanvas = this.context;
+        img.canvas = this.canvas;
+        img.onload = function() {
+            this.contextCanvas.drawImage(this, 0, 0, this.canvas.width, this.canvas.height);
+        }
+        img.src = content;
+        //It's now loaded
+    }
+
+    get editorHeight() {
+        let element = $('#' + this.canvas.id);
+        return element.height();
+    }
  
+    get editorContent() {
+        return this.canvas.toDataURL("image/png", 1.0);
+        //* PNG or base64 ?
+    }
+
     setCanvasScale() {
 
         var savedData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -86,6 +114,7 @@ class Paint {
         this.setCanvasScale();
 
     }
+
 
     unBind() {
         console.log("Unbinding");

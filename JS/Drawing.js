@@ -1,6 +1,11 @@
 function enableDraw(publisher) {
 
+    if(publisher.hasAttribute("previewOnly"))
+        return;
+    
     console.log("Enbled Drawing");
+
+
     if(activeDraw) {
         activeDraw.paint.unBind();
     }

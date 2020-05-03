@@ -194,6 +194,11 @@
     More button style
 */
 
+.drawCanvas[previewOnly="true"] ~ .more-container,
+.richEditorIframe[previewOnly="true"] ~ .more-container {
+    display: none !important;
+}
+
 .more-container {
     position: absolute;
     top: 1em;
@@ -449,6 +454,7 @@
 
 .submitNewProblemButton {
     background: var(--themePrimary);
+    outline: none;
     text-align: center;
     height: 50px;
     display: block;
@@ -459,6 +465,8 @@
     font-size: 1.5em;
     margin: 3% auto 7%;
     position: relative;
+    border: 0;
+    transition: all 0.2s ease-in-out;
     z-index: 1;
 }
 
@@ -472,6 +480,17 @@
 .newProblemUpload label {
     padding-bottom: 0.7em;
     padding-top: 0.7em;
+}
+
+.newProblemUpload input[type="checkbox"] {
+    margin-top: -2em;
+    margin-left: 18.5em;
+}
+
+.downloadInputFiles {
+    text-decoration: none;
+    outline: none;
+    color: inherit;
 }
 
 .project-header-formatted {

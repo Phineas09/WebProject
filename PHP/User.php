@@ -58,6 +58,27 @@ class User {
         return $instance;
     }
 
+    public static function byId($id) {
+
+        $instance = new self();
+
+        $user = ORM::for_table('users')
+        ->where(array(
+            'id' => strtolower($id)
+        ))
+        ->find_one();
+        
+        if($user == false)
+            return $instance;
+
+        $instance->user = $user;
+        $instance->guest = false;
+        $instance->findPrivileges();
+        $instance->findDetails();
+
+        return $instance;
+    }
+
     public static function newUser($name, $method, $oauthId, $email, $password = "", $sendEmail = true) {
         
         $instance = new self();
@@ -177,7 +198,8 @@ class User {
             ';
         }
         else {
-            return '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
+            throw new Exception("User is guest!");
+            //return '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
         }
 
     }
@@ -197,15 +219,6 @@ class User {
         }
     }
 
-
-    
-
-
-    public function getPageContents($pageName) {
-
-
-        
-    }
 
     public function getUserHash() {
         if(!$this->isGuest()){
@@ -227,6 +240,33 @@ class User {
 
     }
 
+    public function changeTitle(string $newTitle) {
+        if(!$this->isGuest()) {
+            $this->details->title = $newTitle;
+            $this->details->save();
+        }
+        return;
+    }
+
+    public function adminUpdateDetails($_MyPost) {
+        if(!$this->isGuest()) {
+
+            $this->updateUserDetails($_MyPost->first_name, $_MyPost->last_name, $this->details->address,
+            $_MyPost->phone_number, $this->details->birth_date);
+
+            if(strcmp($_MyPost->password, "Unset") != 0) {
+                $this->adminChangePassword($_MyPost->password);
+            }
+            $this->changeTitle($_MyPost->title);
+
+            $this->updatePrivileges($_MyPost->is_admin, $_MyPost->can_modify, $_MyPost->can_approve);
+            
+        }
+        else {
+            throw new Exception("User is guest!");
+        }
+    }
+
     public function getOauth() {
         if(!$this->isGuest()) {
             return $this->user->oauth;
@@ -236,15 +276,29 @@ class User {
         if(!$this->isGuest()){
             return ($this->privileges->is_admin) ? true : false;
         }
+        return false;
     }
 
     public function canApprove() {
         if(!$this->isGuest()){
-            return ($this->privileges->cna_approve) ? true : false;
+            return ($this->privileges->can_approve) ? true : false;
         }
+        return false;
     }
 
+    public function canModify() {
+        if(!$this->isGuest()) {
+            return ($this->privileges->can_modify) ? true : false;
+        }
+        return false;
+    }
 
+    public function getId() {
+        if(!$this->isGuest()) {
+            return $this->user->id;
+        }
+        return -1;
+    }
 
     public function getFirstName() {
         return $this->details->first_name;
@@ -284,6 +338,34 @@ class User {
             $this->details->save();
         }
     }
+
+    public function getPrivIsAdmin() {
+        if($this->isAdmin()) {
+            return "True";
+        }
+        else {
+            return "False";
+        }
+    }
+
+    public function getPrivCanApprove() {
+        if($this->canApprove()) {
+            return "True";
+        }
+        else {
+            return "False";
+        }
+    }
+
+    public function getPrivCanModify() {
+        if($this->canModify()) {
+            return "True";
+        }
+        else {
+            return "False";
+        }
+    }
+
 
     public function getBirthDate() {
         return $this->details->birth_date;
@@ -377,10 +459,118 @@ class User {
 
     }
 
+    /**
+     * Required usedId
+     * @throws Exception
+     * @return nothing
+     */
+
+    static function deleteUser($userId, int $targetUser) {
+        try {
+            ORM::get_db()->beginTransaction();
+            //Delete logs
+            $db = ORM::get_db();
+            $db->exec('
+                DELETE FROM logs 
+                    where user = ' . $targetUser . '
+            ;');
+
+            //Delete privileges
+            $db->exec('
+                DELETE FROM privileges 
+                    where user = ' . $targetUser . '
+            ;');
+
+            //Delete details
+
+            $db->exec('
+                DELETE FROM user_details 
+                    where user = ' . $targetUser . '
+            ;');
+
+            //Change problems posted ownership to the user that started the deletion
+
+            $db->exec('
+                UPDATE problems
+                    set author = ' . $userId . '
+                    where author = ' . $targetUser . '
+            ;');
+
+            //Change problems approved
+
+            $db->exec('
+                UPDATE problems_approvedby
+                    set user = ' . $userId . '
+                    where user = ' . $targetUser . '
+            ;');
+
+            //Delte problems_solved
+
+            $db->exec('
+                DELETE FROM problems_solved 
+                    where user = ' . $targetUser . '
+            ;');
+
+            //Delete user entry
+
+            $db->exec('
+                DELETE FROM users
+                    where id = ' . $targetUser . '
+            ;');         
+            ORM::get_db()->commit();
+
+        }
+        catch(Exception $except) {
+            ORM::get_db()->rollBack();
+            throw new Expcetion("Could not delete!");
+        }
+    }
+
+
     // !Helper functions
+
+    private function updatePrivileges($isAdmin, $canModify, $canApprove) {
+
+        if(strcmp($isAdmin, "False") == 0) {
+            $this->privileges->is_admin = 0;
+        }
+        else {
+            if(strcmp($isAdmin, "True") == 0)
+                $this->privileges->is_admin = 1;
+        }
+
+        if(strcmp($canModify, "False") == 0) {
+            $this->privileges->can_modify = 0;
+        }
+        else {
+            if(strcmp($isAdmin, "True") == 0)
+                $this->privileges->can_modify = 1;
+        }
+
+        if(strcmp($canApprove, "False") == 0) {
+            $this->privileges->can_approve = 0;
+        }
+        else {
+            if(strcmp($canApprove, "True") == 0)
+                $this->privileges->can_approve = 1;
+        }
+
+        $this->privileges->save();
+    }
+
+    private function adminChangePassword(string $newPassword) {
+        if(!$this->isGuest()){
+            $this->user->password = hash('sha256', $newPassword);
+            $this->user->save();
+            return;
+        }
+        throw new Exception("User is guest!");
+    }
+
 
     private function updateUserDetails($first_name, $last_name, $address, $phone_number, $birth_date) {
         if(!$this->isGuest()){
+
             $this->details->first_name = $first_name;
             $this->details->last_name = $last_name;
             $this->details->address = $address;
