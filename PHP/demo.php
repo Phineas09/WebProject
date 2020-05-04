@@ -224,6 +224,13 @@
             }
             exit;
         }
+
+        if(isset($_POST["problemsManager"]) && isset($_POST["submitSolution"])) {
+
+            //take solution, compile, run and return rezulst
+
+        }
+
     }
 
 //!
@@ -271,7 +278,6 @@
 
 
             if(isset($_MyPost->downloadInputArhive)) {
-
 
                 echo json_encode(
                     array(
