@@ -548,7 +548,23 @@ function submitSolution() {
     if(sourceFile.length != 0)
         formData.append('sourceFile', sourceFile[0]);
 
-    //send File to server and wait for responses
-    //Compiler, show and log somewhere the tests that passed and not
+    formData.append("problemsManager", true);
+    formData.append("submitSolution", true);
+    formData.append("problemId", problemEditId);
+    
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                alert(response.problemResults);
+            }
+            else alert(response.message);
+        }
+    };
+    
+    request.open('POST', '/PHP/demo.php');
+    request.send(formData);
 
 }

@@ -11,7 +11,7 @@ WrongNoSource       = "Fisierul nu are extensia suportata!"
 WrongDefault        = "A intervenit o eroare!"
 
 def report_error(error_message):
-    print("{\n\t\"statusCode\" : \"400\"\n}", end="")
+    print("{\"statusCode\" : \"400\"}", end="")
     exit(-1)
 
 def delete_file(filename):
@@ -19,6 +19,7 @@ def delete_file(filename):
         os.remove(filename)
 
 def build_source(sourceFileName, tergetFileName):
+
 
     if not os.path.isfile(sourceFileName):
         exit(-1)
@@ -30,8 +31,7 @@ def build_source(sourceFileName, tergetFileName):
 
     executabileFolder = os.path.split(os.path.abspath(sourceFileName))
 
-    os.system("vcvars32 > NUL & cd " + executabileFolder[0] + " & cl /nologo " + sourceFileName + " /Fe: "  + tergetFileName + " > NUL")
-   
+    os.system("vcvars32 > NUL & cd " + executabileFolder[0] + " & cl /nologo " + os.path.abspath(sourceFileName) + " /Fe: "  + os.path.abspath(tergetFileName) + " > NUL")
     objFileName = prePath[0] + ".obj"
     if os.path.isfile(objFileName):
         delete_file(objFileName)
@@ -51,7 +51,7 @@ def run_cmd(executableFile, inputFile, outputFile):
 	except:
 		return 2
 
-	if (val==0):#asta intoarce programul daca e cu succes!
+	if (val==0):
 		return 1
 	else:
 		return 0
@@ -70,6 +70,11 @@ def run_test(executabileFolder, executableFile, inputPath, outputPath, testNumbe
     inputFile.close()
     outputFile.close()
 
+def delete_all_files_dir(outputPath):
+    filelist = [ f for f in os.listdir(outputPath) if f.endswith(".txt") ]
+    for f in filelist:
+        os.remove(os.path.join(outputPath, f))
+
 if __name__ == '__main__':	
 	
     parser = argparse.ArgumentParser()
@@ -81,11 +86,15 @@ if __name__ == '__main__':
     inputPath = executabileFolder + "/Inputs"
     outputPath = executabileFolder + "/Outputs"
     
+    delete_all_files_dir(outputPath)
+
+
     numberOfTests =  len([name for name in os.listdir(inputPath) if os.path.isfile(os.path.join(inputPath, name))])
 
     prePath, extension = os.path.splitext(args.sourcePath)
 
     tergetFileName = prePath + ".exe"
+
     if (extension == ".c") or (extension == ".cpp"):
         build_thread = threading.Thread(target=build_source, kwargs=dict(sourceFileName=args.sourcePath, tergetFileName=tergetFileName))
         build_thread.start()
@@ -105,8 +114,5 @@ if __name__ == '__main__':
     numberOfOutputs =  len([name for name in os.listdir(outputPath) if os.path.isfile(os.path.join(outputPath, name))])
 
     if numberOfOutputs == numberOfTests:
-        print("{\n\t\"statusCode\" : \"200\"\n}", end="")
-
+        print("{\"statusCode\" : \"200\"}", end="")
     delete_file(tergetFileName)
-
-        

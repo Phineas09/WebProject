@@ -4,6 +4,9 @@
 class ProblemsManager
 {
 
+
+
+
     private function _queryFor(string $table, array $conditions) {
         $records = ORM::for_table($table)->where($conditions)->find_many();
         if (empty($records)) 
@@ -186,6 +189,28 @@ class ProblemsManager
         }
 
         return $response;
+    }
+
+
+    public function generateOutputFilesCpp(string $folderPath) {
+
+        $folderPath = ".." . $folderPath;
+        $sourcePath = $folderPath . "source.cpp";
+        $command = escapeshellcmd('py ..\PythonCompiler\problemCompiler.py ' . $sourcePath);
+        $output = exec($command);
+        $scriptResponse = json_decode(stripslashes($output), true);
+        if($scriptResponse["statusCode"] == 200) {
+            return 1;
+        }
+        throw new Exception ("Problem at generation output files!");
+    }
+
+    public function verifySolution(string $sourcePath, string $inputPath, string $outputPath, $problemPoints) {
+
+        $command = escapeshellcmd('py ..\PythonCompiler\problemChecker.py ' . $sourcePath . ' ' . $inputPath . ' ' . $outputPath . ' ' . $problemPoints);
+        $output = exec($command);
+        $scriptResponse = json_decode(stripslashes($output), true);
+        return $scriptResponse;
     }
 
 }

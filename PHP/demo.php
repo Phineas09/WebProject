@@ -209,7 +209,11 @@
                     FileUploader::updateProblemFormData();  // Change Name   
                 }
 
-                //rerun compile and make outputFiles
+                $problemPath = '\Misc\Problems\\';
+                $problem = ORM::for_table("problems")->where(array("id" => $_POST["problemId"]))->find_one();
+                $problemPath = $problemPath . $problem->id . "\\";
+
+                $problemManager->generateOutputFilesCpp($problemPath);
 
                 echo json_encode(
                     array(
@@ -226,9 +230,18 @@
         }
 
         if(isset($_POST["problemsManager"]) && isset($_POST["submitSolution"])) {
-
-            //take solution, compile, run and return rezulst
-
+            try {
+                FileUploader::submitSolution($problemManager);
+                exit;
+            }
+            catch (Exception $e) {
+                echo json_encode(
+                    array(
+                        'statusCode' => 420,
+                        'message' => $e->getMassage()
+                    ));
+            }
+            exit;
         }
 
     }

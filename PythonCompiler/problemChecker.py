@@ -11,10 +11,9 @@ WrongNoSource       = "Fisierul nu are extensia suportata!"
 WrongDefault        = "A intervenit o eroare!"
 
 def report_error(error_message):
-
-    print("{ \n\t \"error\" : \"", end="")
+    print("{\"statusCode\" : \"420\", \"message\" : \"", end="")
     print(error_message, end="")
-    print("\"\n}")
+    print("\"}", end="")
     exit(-1)
 
 def delete_file(filename):
@@ -32,13 +31,9 @@ def build_source(sourceFileName, tergetFileName):
 
     prePath = os.path.splitext(sourceFileName)
 
-
-    #try to compile the source file
-    #am adaugat acestei comenzi un cd, pentru ca vcvars schimba working dir
-
     executabileFolder = os.path.split(os.path.abspath(sourceFileName))
 
-    os.system("vcvars32 > NUL & cd " + executabileFolder[0] + " & cl /nologo " + sourceFileName + " /Fe: "  + tergetFileName + " > NUL")
+    os.system("vcvars32 > NUL & cd " + executabileFolder[0] + " & cl /nologo " + os.path.abspath(sourceFileName) + " /Fe: "  + os.path.abspath(tergetFileName) + " > NUL")
    
     objFileName = prePath[0] + ".obj"
     if os.path.isfile(objFileName):
@@ -109,8 +104,8 @@ def run_test(exeName, executabileFolder, executableFile, inputPath, outputPath, 
     return _retrunVal
 
 def print_test_result(index,value):
-    string = "\t\"" + str(index) + "\" : \"" + value + "\","
-    print (string)
+    string = "\"" + str(index) + "\" : \"" + value + "\","
+    print (string, end="")
 
 if __name__ == '__main__':	
 	
@@ -146,20 +141,16 @@ if __name__ == '__main__':
 
     executabileFolder, exeName = os.path.split(os.path.abspath(tergetFileName))
 
-    print("{")
+    print("{", end="")
 
     for i in range(0, numberOfTests):
         val = run_test(exeName, executabileFolder, tergetFileName, args.inputPath, args.outputPath, i)
-        silently_kill_process(exeName)#pentru siguranta, omoara de fiecare data procesul lansat pentru test
+        silently_kill_process(exeName)
         print_test_result(i,val)
         if val == "Passed":
             score += one_test_ponder
 
-    print ("\t\"score\" : \"", end="")
-
+    print ("\"score\" : \"", end="")
     print (math.ceil(score),end="")
-    print ("\"\n}")
+    print ("\", \"statusCode\" : \"200\" }", end="")
     delete_file(tergetFileName)
-
-
-        

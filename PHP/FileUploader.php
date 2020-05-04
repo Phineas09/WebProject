@@ -27,6 +27,10 @@ class FileUploader {
             $newProblem->testCases = count($_FILES['testFiles']['tmp_name']);
             $newProblem->save();
  
+            $problemPath = '\Misc\Problems\\';
+            $problemPath = $problemPath . $newProblem->id . "\\";
+            $problemManager->generateOutputFilesCpp($problemPath);
+
             echo json_encode(
                 array(
                     'statusCode' => 200
@@ -170,7 +174,6 @@ class FileUploader {
 
     static public function updateProblemFormData() {
 
-
         $newProblem = ORM::for_table("problems")->where(array("id" => $_POST["problemId"]))->find_one();
         $newProblem->name = $_POST["title"];
         $newProblem->save();
@@ -181,6 +184,79 @@ class FileUploader {
 
         fwrite($problemData, $_POST["problemData"]);
         fclose($problemData);
+    }
+
+    static public function submitSolution($problemManager) {
+
+         
+        if(isset($_FILES['sourceFile'])) {
+
+            $user = new User();
+            if($user->isGuest()) {
+                throw new Exception("You cannot submit solutions as guest!");
+            }
+            $problem = ORM::for_table("problems")->where(array("id" => $_POST["problemId"]))->find_one();
+
+            if(!$problem) 
+                throw new Exception("Problem was not found!");
+
+            $sourcePath = './../Misc/UsersSubmits/' . $user->getUserHash() . "/" . $problem->id . "/";
+
+            if(!is_dir($sourcePath)) {
+                mkdir($sourcePath, 0777, true);
+            }
+
+            $filesInFolder = new FilesystemIterator($sourcePath, FilesystemIterator::SKIP_DOTS);
+            $numberOfSubmits = iterator_count($filesInFolder);
+
+            //Move sourceFile, with extension and other stuff
+
+            $file_ext = pathinfo($_FILES['sourceFile']['name'], PATHINFO_EXTENSION);
+            $sourcePath = $sourcePath . 'source' . $numberOfSubmits . '.' . $file_ext;
+
+            if(strcasecmp ($problem->language, self::$extensions[$file_ext]) != 0) 
+                throw new Exception("Invalid language used!");
+
+                $file_tmp = $_FILES['sourceFile']['tmp_name'];
+            if(!move_uploaded_file($file_tmp, $sourcePath)) {
+                throw new Exception("File move error!");
+            }
+
+            //We have moved the file, now test it
+
+            $problemFilesPath = '../Misc/Problems/' . $problem->id . '/';
+
+            $scriptResponse = $problemManager->verifySolution($sourcePath, $problemFilesPath . "Inputs", $problemFilesPath . "Outputs", $problem->points);
+
+            //print_r($scriptResponse);
+
+            //Compare statusCodes and if 200 add score to problem and record the failed and passed tests
+
+            if($scriptResponse["statusCode"] == 200) {
+                $returnText = "";
+                //Format array and send to user 
+                for($i = 0; $i < $problem->testCases; $i++) {
+                    $returnText = $returnText . "Test " . strval($i) . " => " . $scriptResponse[strval($i)] . "\n"; 
+                }
+                $returnText = $returnText . "\nPoints Gained : " . $scriptResponse["score"];
+            }
+            else {
+                throw new Exception($scriptResponse["message"]);
+            }
+
+            //! Save info somewhere in db
+            
+            
+        }
+        else
+            throw new Exception("No file was sent!");
+                 
+        //Send problem results
+        echo json_encode(
+            array(
+                'statusCode' => 200,
+                'problemResults' => $returnText
+            ));
     }
 
 }
