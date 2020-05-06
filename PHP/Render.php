@@ -72,6 +72,25 @@ class Render {
         return $profilePage;
     }
 
+    static private function renderProfilePageAnotherUser($user) {
+
+        $profilePage = self::readElementToRender("ProfilePageAnotherUser");
+        //Format profile Page 
+        $profilePage = str_replace("ReplaceTitle", $user->getTitle(),$profilePage);
+        $profilePage = str_replace("ReplaceUsername", $user->getUsername(),$profilePage);
+        $profilePage = str_replace("ReplaceEmailAddress", $user->getEmailAddress(),$profilePage);
+        $profilePage = str_replace("ReplaceProfileImage", $user->getProfilePicture(),$profilePage);
+        $profilePage = str_replace("ReplaceFirstName", $user->getFirstName(),$profilePage);
+        $profilePage = str_replace("ReplaceLastName", $user->getLastName(),$profilePage);
+        $profilePage = str_replace("ReplaceBirth", $user->getBirthDate(),$profilePage);
+        $profilePage = str_replace("ReplacePoints", $user->getUserPoints(),$profilePage);
+        $profilePage = str_replace("ReplaceSolved", $user->getNumberOfProblemsSolved(),$profilePage);
+        $profilePage = str_replace("ReplacePosted", $user->getNumberOfPublishedProblems(),$profilePage);
+
+        return $profilePage;
+    }
+
+
     static private function renderAdminUserDetails($user) {
 
         $userDetails = self::readElementToRender("AdminUsersDetails");
@@ -121,6 +140,9 @@ class Render {
         }
         if(strcasecmp  ( $pageName, "AdminUsersDetailsNew") == 0) {
             return self::renderAdminUserDetailsNew();
+        }
+        if(strcasecmp  ( $pageName, "ProfilePageAnotherUser") == 0) {
+            return self::renderProfilePageAnotherUser($user);
         }
     }
 

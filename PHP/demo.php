@@ -56,6 +56,9 @@
             id INTEGER AUTO_INCREMENT PRIMARY KEY,
             user INTEGER NOT NULL,
             problem INTEGER NOT NULL,
+            points FLOAT NOT NULL,
+            result TEXT NOT NULL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             CONSTRAINT fk_user_id FOREIGN KEY (user) REFERENCES users(id),
             CONSTRAINT fk_problem_id FOREIGN KEY (problem) REFERENCES problems(id)
     );";   
@@ -148,7 +151,7 @@
     $db->exec($users);
     $db->exec($problems);
     $db->exec($problems_solved);
-    $db->exec($problems_pending);
+    //$db->exec($problems_pending);
     $db->exec($problems_approvedBy);
     $db->exec($logs);
     $db->exec($logs_view);
@@ -191,7 +194,7 @@
         }
 
         if ((isset($_POST["submitProblem"]))) {
-            FileUploader::submitProblem();
+            FileUploader::submitProblem($problemManager);
 
             //run program compile make output and delete exe
         }
@@ -201,10 +204,12 @@
             try {
                 if(isset($_FILES['testFiles'])) {
                     FileUploader::appendFilesToProblem();
+                    //Mark as unapproved
                 } 
                 else {
                     if(isset($_FILES['sourceFile'])) {
                         FileUploader::appendSourceFileToProblem();
+                        //Mark as unapproved
                     }
                     FileUploader::updateProblemFormData();  // Change Name   
                 }
@@ -238,7 +243,7 @@
                 echo json_encode(
                     array(
                         'statusCode' => 420,
-                        'message' => $e->getMassage()
+                        'message' => $e->getMessage()
                     ));
             }
             exit;
@@ -289,6 +294,17 @@
     if(isset($_MyPost->problemsManager)) {
         try {
 
+            if(isset($_MyPost->approveProblem)) {
+
+                $user = new User();
+                $problemManager->approveProblem($user, $_MyPost);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+                exit;
+            }
 
             if(isset($_MyPost->downloadInputArhive)) {
 
@@ -296,6 +312,17 @@
                     array(
                         'statusCode' => 200,
                         'arhivePath' => FileUploader::makeArhiveFile($_MyPost->problemId)
+                    ));
+
+                exit;
+            }
+
+            if(isset($_MyPost->downloadProblemArhive)) {
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'arhivePath' => FileUploader::makeArhiveProblem($_MyPost->problemId)
                     ));
 
                 exit;
@@ -323,17 +350,22 @@
 
     if(isset($_MyPost->loadProblems)) {
         try {
-            if(isset($_MyPost->patternSearch)) {
-                if($_MyPost->pattern === ""){
-                    $var = $problemManager->getProblemsPageContents($_MyPost->sortBy, $_MyPost->order);
-                    
-                }
-                else {
-                    $var = $problemManager->getProblemsPageContentsSearchBy($_MyPost->pattern, $_MyPost->sortBy, $_MyPost->order);
-                }
+
+            if(isset($_MyPost->loadPenginApproval)) {
+                $var = $problemManager->getProblemsContentsPendingApproval();
             }
-            else { 
-                $var = $problemManager->getProblemsPageContents($_MyPost->sortBy, $_MyPost->order);
+            else {
+                if(isset($_MyPost->patternSearch)) {
+                    if($_MyPost->pattern === ""){
+                        $var = $problemManager->getProblemsPageContents($_MyPost->sortBy, $_MyPost->order);
+                    }
+                    else {
+                        $var = $problemManager->getProblemsPageContentsSearchBy($_MyPost->pattern, $_MyPost->sortBy, $_MyPost->order);
+                    }
+                }
+                else { 
+                    $var = $problemManager->getProblemsPageContents($_MyPost->sortBy, $_MyPost->order);
+                }
             }
             echo json_encode(
                 array(
@@ -357,8 +389,14 @@
         try {
 
             if(isset($_MyPost->userFormatted)) {
-                $currentUser = new User();
-                $pageContent = Render::renderPageContents($currentUser, $_MyPost->page);
+                if(isset($_MyPost->ProfilePageAnotherUser)) {
+                    $targetUser = User::byId($_MyPost->userId);
+                    $pageContent = Render::renderPageContents($targetUser, $_MyPost->page);
+                }
+                else {
+                    $currentUser = new User();
+                    $pageContent = Render::renderPageContents($currentUser, $_MyPost->page);
+                }
             }
             else {
                 $pageContent = PageChanger::getPageContents($_MyPost->page);
@@ -414,13 +452,25 @@
                     'statusCode' => 200
                 ));
         }
-
         if(isset($_MyPost->changeUserPassword)) {
             $user = new User();
             $user->changePassword($_MyPost->current_password, $_MyPost->new_password);
             echo json_encode(
                 array(
                     'statusCode' => 200
+                ));
+        }
+
+        if(isset($_MyPost->getUserProblemView)) {
+
+            $user = new User();
+            $array = $user->getUserProblemView($_MyPost->problemId);
+
+            echo json_encode(
+                array(
+                    'statusCode' => 200,
+                    "viewProblemUserButtons" => $array["viewProblemUserButtons"],
+                    "viewProblemUser" => $array["viewProblemUser"]
                 ));
         }
 

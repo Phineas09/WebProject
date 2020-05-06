@@ -6,7 +6,7 @@ class FileUploader {
     static private $extensions = array('c' => 'C', 'cpp' => 'C++');
     static private $reverseExtensions = array('C' => 'c', 'C++' => 'cpp');
 
-    static public function submitProblem() {
+    static public function submitProblem($problemManager) {
         try {
             $user = new User();
             $newProblem = ORM::for_table('problems')->create();
@@ -21,6 +21,7 @@ class FileUploader {
 
             $newProblem->language = self::$extensions[$file_ext];
             $newProblem->testCases = 0;
+            $newProblem->save();
 
             self::formatProblemFiles($newProblem);
             //Make directory for problem
@@ -66,6 +67,48 @@ class FileUploader {
             $zipFile->close();
         }
         return $problemPath . "/inputFiles.zip";
+    }
+
+    static public function makeArhiveProblem($problemId) {
+        $zipFile = new ZipArchive;
+        $problemPath = './../Misc/Problems/' . $problemId;
+        
+        $problem = ORM::for_table("problems")->where(array("id" => $problemId))->find_one();
+
+        if($problem) {
+            if ($zipFile->open($problemPath . "/problemFiles.zip" , (ZipArchive::CREATE | ZipArchive::OVERWRITE)) === TRUE)
+            {
+                if ($handle = opendir($problemPath . "/Inputs"))
+                {
+                    while (false !== ($entry = readdir($handle)))
+                    {
+                        if ($entry != "." && $entry != ".." && !is_dir($problemPath . "/Inputs/" . $entry))
+                        {
+                            $zipFile->addFile($problemPath . "/Inputs/" . $entry,  "Inputs/" . $entry);
+                        }
+                    }
+                    closedir($handle);
+                }
+
+                if ($handle = opendir($problemPath . "/Outputs"))
+                {
+                    while (false !== ($entry = readdir($handle)))
+                    {
+                        if ($entry != "." && $entry != ".." && !is_dir($problemPath . "/Outputs/" . $entry))
+                        {
+                            $zipFile->addFile($problemPath . "/Outputs/" . $entry,  "Outputs/" . $entry);
+                        }
+                    }
+                    closedir($handle);
+                }
+
+                $zipFile->addFile($problemPath . "/source." . self::$reverseExtensions[$problem->language],  "source." . self::$reverseExtensions[$problem->language] );
+
+                $zipFile->close();
+            }
+            return $problemPath . "/problemFiles.zip";
+        }
+        throw new Exception("Problem was not found!?");
     }
 
     static public function appendFilesToProblem() {
@@ -190,7 +233,6 @@ class FileUploader {
 
          
         if(isset($_FILES['sourceFile'])) {
-
             $user = new User();
             if($user->isGuest()) {
                 throw new Exception("You cannot submit solutions as guest!");
@@ -224,9 +266,15 @@ class FileUploader {
 
             //We have moved the file, now test it
 
+            if(!$problem->points) {
+                throw new Exception("Problem is not corectly formatted!");
+            }
+
             $problemFilesPath = '../Misc/Problems/' . $problem->id . '/';
 
-            $scriptResponse = $problemManager->verifySolution($sourcePath, $problemFilesPath . "Inputs", $problemFilesPath . "Outputs", $problem->points);
+            $output = $problemManager->verifySolution($sourcePath, $problemFilesPath . "Inputs", $problemFilesPath . "Outputs", $problem->points);
+
+            $scriptResponse = json_decode(stripslashes($output), true);
 
             //print_r($scriptResponse);
 
@@ -241,12 +289,26 @@ class FileUploader {
                 $returnText = $returnText . "\nPoints Gained : " . $scriptResponse["score"];
             }
             else {
+
+                $recordSolve = ORM::for_table("problems_solved")->create();
+                $recordSolve->user = $user->getId();
+                $recordSolve->problem = $problem->id;
+                $recordSolve->points = 0;
+                $recordSolve->result = $output;
+                $recordSolve->submitNumber = $numberOfSubmits;
+                $recordSolve->save();
+
                 throw new Exception($scriptResponse["message"]);
             }
 
-            //! Save info somewhere in db
-            
-            
+            $recordSolve = ORM::for_table("problems_solved")->create();
+            $recordSolve->user = $user->getId();
+            $recordSolve->problem = $problem->id;
+            $recordSolve->points = $scriptResponse["score"];
+            $recordSolve->submitNumber = $numberOfSubmits;
+            $recordSolve->result = $output;
+            $recordSolve->save();
+
         }
         else
             throw new Exception("No file was sent!");

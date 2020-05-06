@@ -241,7 +241,6 @@ function renderNode(parentElement, nodeClass, async = true) {
     );
 }
 
-
 //* Place for problem save
 
 function getEditorsData(contentContainer) {
@@ -279,23 +278,22 @@ function submitNewProblem() {
 
     var contentContainer = document.getElementById("content");
     let problemName = document.getElementById("problem_Name").value;
+    let infoMessage = document.getElementById("infoProblemSubmit");
 
-    if(!problemName) {
-        //!error
+    if(!problemName || problemName.length < 7) {
+        infoMessage.classList = "isWarning";
+        infoMessage.innerHTML = "The problem name must be at least 7 caracters!";
         return;
     }
 
     //Get the drawing and text sequentially
 
-    if(minCaracters < 200) {
+   // if(minCaracters < 200) {
         //! Error not enough caracters
-    }
+ //   }
 
     let formData = new FormData();
 
-    let problemData = getEditorsData(contentContainer);
-
-    formData.append('problemData', JSON.stringify(problemData));
     formData.append('title', problemName);
 
     //Append files 
@@ -304,9 +302,13 @@ function submitNewProblem() {
     let testFiles = document.getElementById("testFiles").files;
 
     if(sourceFile.length == 0 || testFiles.length == 0) {
-        //! Error 
+        infoMessage.classList = "isError";
+        infoMessage.innerHTML = "You must select at least one test file and one source file!"; 
         return;
     }
+
+    let problemData = getEditorsData(contentContainer);
+    formData.append('problemData', JSON.stringify(problemData));
 
     formData.append('sourceFile', sourceFile[0]);
     
@@ -321,8 +323,15 @@ function submitNewProblem() {
         if(this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
             var response = JSON.parse(this.responseText);
+            let infoMessage = document.getElementById("infoProblemSubmit");
             if(response.statusCode == 200) {
-                console.log("Done?");
+                infoMessage.classList = "isSuccess";
+                infoMessage.innerHTML = "The problem was succesfully uploaded and will be waiting for approval"; 
+                document.getElementById("submitNewProblem").classList.add("hidden");
+            }
+            else {
+                infoMessage.classList = "isError";
+                infoMessage.innerHTML = "Something happened during the submission process!"; 
             }
         }
     };
@@ -362,7 +371,9 @@ function loadElementsViewProblem(problemData, problemName) {
             renderNode(addElement, "textEditor", false);
             let textEditor = _getLastDomElement("textEditor");
             textEditor = textEditor.childNodes[2];
-            textEditor.contentDocument.getElementsByTagName("body")[0].innerHTML = editor["content"];
+            setTimeout(function () {
+                textEditor.contentDocument.getElementsByTagName("body")[0].innerHTML = editor["content"];
+            }, 200);
             textEditor.setAttribute("previewOnly", "true");
         }
 
@@ -384,6 +395,26 @@ function loadViewProblem() {
 
 var problemEditId = null;
 
+function viewProblemFormatUser() {
+
+    let problemId = problemEditId;
+    makeHttpRequest( function () {
+        if(this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);   
+            if(response.statusCode == 200) {
+                document.getElementById("viewProblemUserButtons").innerHTML = response.viewProblemUserButtons;
+                document.getElementById("viewProblemUser").innerHTML = response.viewProblemUser;
+            }
+        }
+    },
+    {
+        "user" : true,
+        "problemId" : problemId,
+        "getUserProblemView" : true
+    }
+    );
+}
+
 function viewProblem(viewProjectButton, projectGiven = -1) {
 
     let projectId = 0;
@@ -396,7 +427,9 @@ function viewProblem(viewProjectButton, projectGiven = -1) {
     problemEditId = projectId;
 
     changePage("ViewProblem");
-    //Make request to get problems info
+
+    viewProblemFormatUser();
+
 
     makeHttpRequest( loadViewProblem,
     {
@@ -436,10 +469,21 @@ function editProblem(publisher) {
 
     //Do something about thing down  
 
-    document.getElementById("projectViewEdit").classList.remove("hidden");
+    (target = document.getElementById("projectViewEdit")) ? target.classList.remove("hidden") : null;
+    (target = document.getElementById("projectViewPrev")) ? target.classList.add("hidden") : null;
+    (target = document.getElementById("modifyProblem")) ? target.parentElement.classList.remove("hidden") : null;
+    (target = document.getElementById("submitSolution")) ? target.parentElement.classList.add("hidden") : null;
+
+    (target = document.getElementById("projectApproveDetails")) ? target.classList.add("hidden") : null;
+    (target = document.getElementById("approveProblem")) ? target.parentElement.classList.add("hidden") : null;
+
+
+
+/*
     document.getElementById("projectViewPrev").classList.add("hidden");
     document.getElementById("modifyProblem").parentElement.classList.remove("hidden");
     document.getElementById("submitSolution").parentElement.classList.add("hidden");
+*/
 
 }
 
@@ -453,8 +497,7 @@ function cancelEdit(publisher) {
     }
 }
 
-async function downloadInputFilesForProblem() {
-    let problemId = problemEditId;
+async function downloadInputFilesForProblem(data) {
     makeHttpRequest( function () {
         if(this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
@@ -467,22 +510,35 @@ async function downloadInputFilesForProblem() {
             }
         }
     },
-    {
-        "problemsManager" : true,
-        "downloadInputArhive" : true,
-        "problemId" : problemId
-    },
+        data,
         "/PHP/demo.php",
         false
     );
 }
 
 function downloadProblemFiles(event) {
+    let problemId = problemEditId;
     event.preventDefault();
-    downloadInputFilesForProblem();
+    downloadInputFilesForProblem({
+        "problemsManager" : true,
+        "downloadInputArhive" : true,
+        "problemId" : problemId
+    });
+}
+
+function downloadProblemData(event) {
+    let problemId = problemEditId;
+    event.preventDefault();
+    downloadInputFilesForProblem({
+        "problemsManager" : true,
+        "downloadProblemArhive" : true,
+        "problemId" : problemId
+    });
 }
 
 function submitModifyProblem() {
+
+    let infoMessage = document.getElementById("infoMessageModify");
 
     let overwrite = document.getElementById("appendToExisting").checked;
 
@@ -490,7 +546,8 @@ function submitModifyProblem() {
     let problemName = document.getElementById("problem_Name").value;
 
     if(!problemName) {
-        //!error
+        infoMessage.innerHTML = "The problem name can not be empty";
+        infoMessage.parentElement.classList = "isError";
         return;
     }
 
@@ -528,6 +585,9 @@ function submitModifyProblem() {
             var response = JSON.parse(this.responseText);
             if(response.statusCode == 200) {
                 document.getElementById("modifyProblem").classList.add("successButton");
+                let infoMessage = document.getElementById("infoMessageModify");
+                infoMessage.innerHTML = "The problem has been succesfully updated!";
+                infoMessage.parentElement.classList = "isSuccess";
             }
         }
     };
@@ -538,15 +598,21 @@ function submitModifyProblem() {
     return false;
 }
 
-
 function submitSolution() {
 
     let sourceFile = document.getElementById("sourceFile").files;
+    let infoMessage = document.getElementById("infoMessageSubmit");
 
     let formData = new FormData();
 
-    if(sourceFile.length != 0)
+    if(sourceFile.length != 0) {
         formData.append('sourceFile', sourceFile[0]);
+    }
+    else {
+        infoMessage.classList = "isError";
+        infoMessage.innerHTML = "You mush select a source file!";
+        return;
+    }
 
     formData.append("problemsManager", true);
     formData.append("submitSolution", true);
@@ -558,6 +624,7 @@ function submitSolution() {
             console.log(this.responseText);
             var response = JSON.parse(this.responseText);
             if(response.statusCode == 200) {
+
                 alert(response.problemResults);
             }
             else alert(response.message);
@@ -566,5 +633,66 @@ function submitSolution() {
     
     request.open('POST', '/PHP/demo.php');
     request.send(formData);
+    infoMessage.classList = "isSuccess";
+    infoMessage.innerHTML = "Your soluton has been sent!";
+}
+
+function approveProblem() {
+
+    let problemId = problemEditId;
+
+    let infoMessage = document.getElementById("infoMessageApprove");
+
+    let points = document.getElementById("approveProblemPoints").value;
+
+    if(parseInt(points) == 0 || points.length == 0 ) {
+        infoMessage.innerHTML = "The problem can not have 0 points !";
+        infoMessage.parentElement.classList = "isWarning";
+        return;
+    }
+
+    if(parseInt(points) < 9 ) {
+        infoMessage.innerHTML = "The problem must have more than 9 points !";
+        infoMessage.parentElement.classList = "isWarning";
+        return;
+    }
+
+    let difficulty = document.getElementById("approveProblemDiff");
+    difficulty = difficulty.options[difficulty.selectedIndex].value;
+
+    let problemBrief = document.getElementById("approveBrief").value;
+
+    if(problemBrief.length < 70) {
+        infoMessage.innerHTML = "The problem brief must have at least 70 caracters!";
+        infoMessage.parentElement.classList = "isWarning";
+        return;
+    }
+
+    //Set problem points, difficulty and presentation
+
+    makeHttpRequest( function () {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);   
+            if(response.statusCode == 200) {
+                alert("Problem was succesfully approved!");
+                
+                goBackOnePage();
+
+            }
+            else alert("Problem could not be approved!");
+        }
+    },
+    {
+        "problemsManager" : true,
+        "approveProblem" : true,
+        "problemId" : problemId,
+        "problemPoints" : points,
+        "problemBrief" : problemBrief,
+        "problemDiff" : difficulty
+    }
+    );
 
 }
+
+

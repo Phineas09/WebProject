@@ -89,7 +89,28 @@ class ProblemsManager
     }
 
     public function getProblemsPendingApproval() {
-        return $this->_queryFor("problems", array('approved' => 0));
+        $records = ORM::for_table("problems")->where(array('approved' => 0))
+                        ->order_by_asc("date")
+                        ->find_many();
+        if (empty($records)) 
+            return NULL;
+        return $records;
+    }
+
+    public function getProblemsContentsPendingApproval() {
+
+        $problems = $this->getProblemsPendingApproval();
+
+        if($problems == NULL)
+            throw new Exception("No Problems Avalable");
+        
+        $response = "";
+
+        foreach($problems as $problem) {
+            $response = $response . $this->_getProjectElement($problem);
+        }
+
+        return $response;
     }
 
     public function getProblemData($problemId) {
@@ -162,6 +183,38 @@ class ProblemsManager
         return $response;
     }
 
+    public function approveProblem($user, $_MyPost) {
+
+        $problemId = $_MyPost->problemId;
+
+        $problem = ORM::for_table("problems")->where(array("id" => $problemId))->find_one();
+
+        if($problem) {
+
+            try {
+                ORM::get_db()->beginTransaction();
+                $problem->approved = $user->getId();
+                $approvedBy = ORM::for_table("problems_approvedby")->create();
+                $approvedBy->user = $user->getId();
+                $approvedBy->problem = $problemId;
+                $problem->points = $_MyPost->problemPoints;
+                $problem->presentation = $_MyPost->problemBrief;
+                $problem->difficulty = $_MyPost->problemDiff;
+                $approvedBy->save();
+                $problem->save();
+                ORM::get_db()->commit();
+                return;
+            }
+            catch (Exception $e) {
+                ORM::get_db()->rollBack();
+                throw new Exception("Internal Error");
+            }
+            return;
+        }
+        throw new Exception("Problem was not found!");
+
+    }
+
 
     /**
      * Returns returns all validated problems properly formated 
@@ -209,8 +262,7 @@ class ProblemsManager
 
         $command = escapeshellcmd('py ..\PythonCompiler\problemChecker.py ' . $sourcePath . ' ' . $inputPath . ' ' . $outputPath . ' ' . $problemPoints);
         $output = exec($command);
-        $scriptResponse = json_decode(stripslashes($output), true);
-        return $scriptResponse;
+        return $output;
     }
 
 }

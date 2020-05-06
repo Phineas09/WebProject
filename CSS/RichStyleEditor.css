@@ -6,9 +6,17 @@
     border: none;
     margin-bottom: 0.1rem;
     margin-top: 0.3rem;
-    
-    //border: 0.15em solid var(--themePrimary);
-    
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .selectediFrame {
@@ -349,8 +357,6 @@
     border: none;
     margin-bottom: 0.1rem;
     margin-top: 0.3rem;
-    //border: 0.15em solid var(--themePrimary);
-
 }
 
 
@@ -482,10 +488,49 @@
     padding-top: 0.7em;
 }
 
+.newProblemUpload .approveSelectWrap select {
+    -webkit-appearance: none;
+	-moz-appearance: none;
+	color: inherit;
+    font-weight: 500;
+    font-size: 2em;
+	background: transparent;
+	outline: none;
+	box-shadow: none;
+	border: 0;
+    padding: 0;
+	font-size: 13px;	
+	font-family: 'Roboto Slab', serif;
+}
+
+.newProblemUpload .approveSelectWrap::after {
+    content: " ";
+    margin-top: 0.5em;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid black;
+    color: black;
+    position: absolute;
+    margin-top: 0.5em;
+}
+
 .newProblemUpload input[type="checkbox"] {
     margin-top: -2em;
     margin-left: 18.5em;
 }
+
+.approveTextArea {
+    font-family: inherit;
+    font-size: inherit;
+    position: relative;
+    width: 95%;
+    height: 110px;
+    overflow: hidden;
+    resize: vertical;
+}
+
 
 .downloadInputFiles {
     text-decoration: none;
@@ -497,6 +542,18 @@
     margin-top: 1em;
 }
 
+.isInfo {
+    color: #00529B;
+}
+.isSuccess {
+    color: #4F8A10;
+}
+.isWarning {
+    color: #9F6000;
+}
+.isError {
+    color: #D8000C;
+}
 
 @media screen and (min-width: 1024px) {
 
@@ -518,12 +575,9 @@
         margin-left: 4em;
     }
 
+    .newProblemUpload .approveSelectWrap {
+        margin-top: -2em;
+        margin-left: 12.5em;
+    }
 
 }
-
-
-
-
-
-
-

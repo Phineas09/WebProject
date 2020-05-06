@@ -57,10 +57,36 @@ class PageChanger {
 		);
 	}
 
+	changePageFormatted(data) {
+
+		data["pageChange"] = true;
+		data["page"] = this._page;
+		data["userFormatted"] = true;
+
+		//force the page change request to be syncronus @!s
+		makeHttpRequest( function() {
+			if(this.readyState == 4 && this.status == 200) {
+				//console.log(this.responseText);
+				var response = JSON.parse(this.responseText);
+				if(response.statusCode == 200) {
+
+					document.getElementById("content").innerHTML = response.pageContent;
+					executeAnimationsLoading();
+				}
+				else {
+					console.log("error 404 define it!@!");
+				}
+			}
+		},
+			data,
+			this._link,
+			false
+		);
+	}
+
 }
 
 // ! Page history thingy
-
 
 jQuery(document).ready(function($) {
 
@@ -82,6 +108,12 @@ jQuery(document).ready(function($) {
     }
 });
 
+
+function goBackOnePage() {
+	currentPage = historyStack.pop();
+	pageDictionary[currentPage]();
+}
+
 // Page management part !@!
 
 
@@ -98,13 +130,30 @@ var pageDictionary = {
 	"AdminUsers" : pageChangeAdminUsers,
 	"AdminStatistics" : pageChangeAdminStatistics,
 	"ContactPage" : pageChangeContactPage,
-	"ViewProblem" : pageChangeViewProblem
+	"ViewProblem" : pageChangeViewProblem,
+	"ProfilePageAnotherUser" : pageChangeProfilePage
 };
 
 function changePage(page) {
 	pageDictionary[page]();
 	historyStack.push(currentPage);
 	currentPage = page;
+}
+
+function pageChangeProfilePageUser(userId) {
+
+	historyStack.push(currentPage);
+	// ?
+	pageChanger.page = "ProfilePageAnotherUser";
+	currentPage = "ProfilePageAnotherUser";
+
+	data = {
+		"userId" : userId,
+		"ProfilePageAnotherUser" : true
+	};
+	pageChanger.changePageFormatted(data);
+	document.getElementById("mainHtml").setAttribute("theme", "blue");
+
 }
 
 function pageChangeProfilePage() {
@@ -121,10 +170,11 @@ function pageChangeViewProblem() {
 	pageChanger.page = "ViewProblem";
 	pageChanger.changePage();
 
-/*	setTimeout(function () {
+	
+	setTimeout(function () {
 		formatEditorElements();
 	}, 200);
-*/
+
 	return false;
 }
 
@@ -218,10 +268,8 @@ function pageChangeHome() {
 
 function searchProblemsSort(pattern, sortBy="author", order="asc") {
 
-	console.log(pattern);
 	var options = document.getElementById("sortBySelector");
 	sortBy = options.options[options.selectedIndex].text;
-	console.log(sortBy);
 
 	makeHttpRequest(
 		onSuccessLoadProblemList, 	
@@ -240,12 +288,14 @@ function searchProblemsSort(pattern, sortBy="author", order="asc") {
 
 function onSuccessLoadProblemList() {
 	if(this.readyState == 4 && this.status == 200) {
-
 		var response = JSON.parse(this.responseText);
 
 		if(response.statusCode == 200) {
 			document.getElementById("project-list").innerHTML = response.problemList;
 			projectListFloatIn();
+		}
+		if(response.statusCode == 412) {
+			alert("No pending problems avalable!");
 		}
 	}
 }
@@ -259,6 +309,19 @@ function loadProblemList(sortBy = "author", order = "asc") {
 			"loadProblems" : true,
 			"sortBy" :	sortBy.toLowerCase(),
 			"order" : order
+ 		}
+	);
+
+	return false;
+}
+
+function pendingApproval() {
+
+	makeHttpRequest(onSuccessLoadProblemList, 	
+		{
+			"contentLoader" : true,
+			"loadProblems" : true,
+			"loadPenginApproval" :	true
  		}
 	);
 

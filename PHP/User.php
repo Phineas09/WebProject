@@ -388,11 +388,11 @@ class User {
                     'problems_solved',
                     array( 'problems_solved.problem', '=', 'problems.id'))
                 ->where(array('problems_solved.user' => $this->user->id, 'problems.approved' => 1))   
-                ->select_expr('sum(problems.points)', 'result')    
+                ->select_expr('sum(problems_solved.points)', 'result')    
                 ->find_many();
 
             if($problemsSolved) {
-                return $problemsSolved[0]->result;
+                return ($problemsSolved[0]->result) ? $problemsSolved[0]->result : 0;
             }
         }
         return 0;
@@ -457,6 +457,141 @@ class User {
         throw new Exception("User is guest!");
         
 
+    }
+
+
+    public function ownsProblem($problemId) {
+
+        $result = ORM::for_table("problems")->where(array("id" => $problemId))->find_one();
+
+        if($result) {
+            if($result->author == $this->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getUserProblemView($problemId) {
+
+        $problemApproved = $this->isApproved($problemId);
+
+        $viewProblemUserButtons = (!$this->isGuest() && ( $this->isAdmin() || $this->canModify() || $this->ownsProblem($problemId))) ? 
+        '   <button id="viewProblemModify" onclick="editProblem(this); return false" class="submitNewProblemButton" >Modify</button>
+            <button id="viewProblemCancel" onclick="cancelEdit(); return false" class="submitNewProblemButton hidden" >Cancel</button>' : "";
+
+
+        $viewProblemUser = ($problemApproved && !$this->isGuest()) ? 
+        '<div id="projectViewPrev" class="project-header project-header-formatted">
+            <div class="content-container">
+                <section class="">
+                    <p id="infoMessageSubmit"></p>
+                </section>
+                <section>
+                    <p>*Upload your solution!</p>
+                    <form class="newProblemUpload" action="/action_page.php">
+                        <label for="files">Source File:</label>
+                        <input type="file" id="sourceFile" name="sourceFile"><br><br>
+                    </form> 
+                </section>
+            </div> 
+        </div>
+
+        <div class="content-container">
+            <button id="submitSolution" onclick="submitSolution(); return false" class="submitNewProblemButton" >Submit Solution</button>
+        </div>' : ( ($problemApproved) ? 
+        '<div id="projectViewEdit" class="project-header project-header-formatted">
+            <div class="content-container">
+                <section class="isInfo">
+                    <p id="infomessage">You must be a member in order to submit your solution!</p>
+                </section>
+            </div> 
+        </div>' : '' );
+
+        $viewProblemUser = (!$this->isGuest() && ( $this->isAdmin() || $this->canModify() || $this->ownsProblem($problemId))) ? 
+        ( $viewProblemUser . '<div id="projectViewEdit" class="project-header project-header-formatted hidden">
+            <div class="content-container">
+                <section class="">
+                    <p id="infoMessageModify"></p>
+                </section>
+                <section>
+                    <p>Input Files</p>
+                    <form class="newProblemUpload" action="/action_page.php">
+                        <label><a class="downloadInputFiles" onclick="downloadProblemFiles(event)" >Download Input Files</a></label>
+
+                        <label for="testFiles">New Input Files:</label>
+                        <input type="file" id="testFiles" name="testFiles" multiple><br><br>
+
+                        <label for="sourceFile">New Source File</label>
+                        <input type="file" id="editSourceFile" name="sourceFile"><br><br>
+                                        
+                        <label for="appendToExisting">Overwrite existing ?</label><br>
+                        <input type="checkbox" id="appendToExisting" name="appendToExisting" value=""><br><br>
+                    </form> 
+                </section>
+            </div> 
+        </div>
+
+        <div class="content-container hidden">
+            <button id="modifyProblem" onclick="submitModifyProblem(); return false" class="submitNewProblemButton" >Commit Edits</button>
+        </div>') : $viewProblemUser;
+
+
+
+        // If problem is not approved display approve button if is admin and can approve
+
+        if(!$this->isApproved($problemId)) { 
+            $viewProblemUser = (!$this->isGuest() && ( $this->isAdmin() || $this->canApprove())) ? 
+            ( $viewProblemUser . '
+
+            <div id="projectApproveDetails" class="project-header project-header-formatted">
+                <div class="content-container">
+                    <section class="">
+                        <p id="infoMessageApprove"></p>
+                    </section>
+                    <section>
+                        <p>Approve Problem Details</p>
+                        <form class="newProblemUpload" action="/action_page.php">
+                            <label><a class="downloadInputFiles" onclick="downloadProblemData(event)" >Download Problem Files</a></label>
+
+                            <label for="sourceFile">Problem Points</label>
+                            <input type="number" id="approveProblemPoints" name="sourceFile"><br><br>
+
+                            <label for="difficulty">Difficulty:</label>
+                            <div class="approveSelectWrap">
+                                <select id="approveProblemDiff">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                            <label for="textarea">Briefly describe the problem.</label>
+                            <textarea id="approveBrief" class="approveTextArea">
+                            </textarea>
+
+                        </form> 
+                    </section>
+                </div> 
+            </div>
+
+
+            <div class="content-container">
+                <button id="approveProblem" onclick="approveProblem(); return false" class="submitNewProblemButton" >Approve Problem</button>
+            </div>
+            ') : $viewProblemUser;
+        }
+
+        //$viewProblemUser
+
+
+
+
+        $_returnValue = array (
+            "viewProblemUserButtons" => $viewProblemUserButtons,
+            "viewProblemUser" => $viewProblemUser
+        );
+
+        return $_returnValue;
     }
 
     /**
@@ -528,6 +663,16 @@ class User {
 
 
     // !Helper functions
+
+    private function isApproved($problemId) {
+
+        $problem = ORM::for_table("problems")->where(array("id" => $problemId))->find_one();
+        if($problem) {
+            if($problem->approved == 1)
+                return true;
+        }
+        return false;
+    }
 
     private function updatePrivileges($isAdmin, $canModify, $canApprove) {
 
