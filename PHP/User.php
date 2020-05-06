@@ -12,6 +12,7 @@ class User {
     private $user = null;
     private $privileges = null;
     private $details = null;
+    private $notifications = null;
 
     // ! Ctors
 
@@ -31,6 +32,7 @@ class User {
             $this->guest = false;
             $this->findPrivileges();
             $this->findDetails();
+            $this->findNotifications();
         }
         else {
             $this->guest = true;
@@ -54,7 +56,7 @@ class User {
         $instance->guest = false;
         $instance->findPrivileges();
         $instance->findDetails();
-
+        $instance->findNotifications();
         return $instance;
     }
 
@@ -75,6 +77,7 @@ class User {
         $instance->guest = false;
         $instance->findPrivileges();
         $instance->findDetails();
+        $instance->findNotifications();
 
         return $instance;
     }
@@ -87,6 +90,7 @@ class User {
         $instance->guest = false;
         $instance->createPrivileges();
         $instance->createDetails();
+        $instance->createNotifications();
 
         //if($sendEmail === true)
             //! Send verification email ?  
@@ -122,6 +126,8 @@ class User {
         $instance->guest = false;
         $instance->findPrivileges();
         $instance->findDetails();
+        $instance->findNotifications();
+
         $instance->login();
         return $instance;        
     }
@@ -594,6 +600,55 @@ class User {
         return $_returnValue;
     }
 
+    public function markNotificationAsRead() {
+        try{
+            if($this->notifications->data != null) {
+                if($this->notifications->new == 0) {
+
+                    $notifications = json_decode(stripslashes($this->notifications->data), true);
+
+                    foreach ($notifications as &$notification) {
+                        $notification["read"] = true;
+                    } 
+
+                    $this->notifications->data = json_encode($notifications);
+                    $this->notifications->save();
+                }
+            }
+        }
+        catch(Exception $e) {
+            throw new Exception("Something happened!");
+        }
+    }
+
+    public function getNotificationsAll() {
+        if($this->notifications->data != null) {
+            return $this->notifications->data;
+        }
+        return "";
+    }
+
+    public function getNotifications() {
+
+        //echo $currentNotifications;
+        if($this->notifications) {
+            if($this->notifications->data != null && intval($this->notifications->new) == 1) {
+
+                $this->notifications->new = 0;
+                $this->notifications->save();
+
+                return array ( 
+                    'notifications' => $this->notifications->data,
+                    'newNotifications' => '1'
+                );
+            }
+        }
+        return array ( 
+            'notifications' => '',
+            'newNotifications' => '0'
+        );
+    }
+
     /**
      * Required usedId
      * @throws Exception
@@ -660,6 +715,7 @@ class User {
             throw new Expcetion("Could not delete!");
         }
     }
+
 
 
     // !Helper functions
@@ -741,6 +797,15 @@ class User {
         return $privileges;
     }
 
+    private function findNotifications() {
+        $details = ORM::for_table('user_notifications')->where(array('user' => $this->user->id))->find_one();
+        if($details == false) {
+            return $this->createNotifications();
+        }
+        $this->notifications = $details;
+        return $details;
+    }
+
     private function findDetails() {
         $details = ORM::for_table('user_details')->where(array('user' => $this->user->id))->find_one();
         if($details == false) {
@@ -763,6 +828,14 @@ class User {
         $details->user = $this->user->id;
         $details->save();
         $this->details = $details;
+        return $details;
+    }
+
+    private function createNotifications() {
+        $details = ORM::for_table('user_notifications')->create();
+        $details->user = $this->user->id;
+        $details->save();
+        $this->notifications = $details;
         return $details;
     }
 

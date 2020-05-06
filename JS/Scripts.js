@@ -19,6 +19,7 @@ function navScrollFunction() {
 		navbar.style["transition"] = "0.1s ease-in-out";		
 		//navbar.style["background-color"] = "rgba(164, 167, 171,1)";
 		navbar.style["box-shadow"] = "0 0px 12px 1px #333";
+		navbar.setAttribute("data", "float");
 
 		if(homePageContainer)	
 			homePageContainer.style.height = "90vh";
@@ -28,7 +29,7 @@ function navScrollFunction() {
 		navbar.style.position = "relative";
 		//navbar.style["background-color"] = "white";
 		navbar.style["box-shadow"] = "none";
-	
+		navbar.removeAttribute("data");
 		if(homePageContainer)	
 			homePageContainer.style.height = "100vh";
 

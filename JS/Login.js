@@ -57,9 +57,12 @@ function getCookie(cname) {
 }
 
 function recuringLoggedInRequest() {
+
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
-			//console.log(this.response);
+			var response = JSON.parse(this.responseText);
+			if(response.statusCode == 200) {
+			}
 		}
 	},
 	{
@@ -432,7 +435,6 @@ function _oauthLoginFunction() {
 
 		console.log(this.responseText);
 		var response = JSON.parse(this.responseText);
-
 		var messageBox = document.getElementById("signInMessageBox");
 		if(response.statusCode == 200) {
 			messageBox.classList.add("info-message");

@@ -14,9 +14,10 @@
 	<link rel="stylesheet"  href="./CSS/NewProblem.css">
 	<link rel="stylesheet"  href="./CSS/RichStyleEditor.css">
 	<link rel="stylesheet"  href="./CSS/ProfilePage.css">
+	<link rel="stylesheet"  href="./CSS/Notifications.css">
 	<link rel="stylesheet" type="text/css" href="./CSS/AdminPage.css">
 	<link rel="stylesheet" href="./CSS/Galery.css">
-
+	<link rel="stylesheet"  href="./CSS/Chat.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<meta charset="utf-8">
@@ -29,9 +30,36 @@
 </head>
 
 <body id="body">
+	
 		<div id="navbarHeader" class="navbarHeader">
 			<h1 id="logo" onclick='changePage("Home"); return false' class="logo">MTARENA</h1>
 			<input type="checkbox" onClick="makeBlurry()" id="nav-toggle" class="nav-toggle">
+
+			<div class="wrapper">
+                <div class="notification">
+                    <i class="far fa-bell"></i>
+                    <div class="notify-count count1 common-count" count="0">
+                        <div class="value">0</div>
+                    </div>
+				</div>
+                <div class="notificationDropdownWrapper">
+				
+					<div class="notification-dropdown dd">
+						<div class="arrow-up"></div>
+						<div class="header">
+							<div class="notificationContainer">
+								<div class="text fl">Notifications</div>
+								<div class="notify-count common-count count2 fl" count="0">
+									<div class="value">0</div>
+								</div>
+							</div>
+						</div>
+						<div class="items">
+		
+						</div>
+					</div>
+				</div>
+            </div>
 
 			<nav id="navbar">
 				<ul id="navbar-ul">
@@ -105,6 +133,51 @@
 			</div>
 		</div>
 	
+
+	<div id="chatFloatOpen" onclick="openChat(); return false" class="chatFloatOpen">
+		<p>Open Chat</p>
+	</div>
+
+	<div id="chatContainer" class="chatContainer">
+		<div id="chatContactList" class="chatContactList hidden">
+			<div id="chatContactItems" class="chatContactItems">
+				<div class="chatContact">
+					<img src="/Misc/ProfilePictures/1807639c0ae5a986c0e076b543e2251b" alt="avatar" />
+					<div class="hidden">ID</div>
+					<div class="about">
+						<div class="name">Vincent Porter</div>
+						<div class="status">
+							<i class="fa fa-circle online"></i> online
+						</div>
+					</div>
+				</div>
+				<div class="chatContact">
+					<img src="/Misc/ProfilePictures/ca7eb68bb15ae9982515e28c221de0f6" alt="avatar" />
+					<div class="about">
+						<div class="name">Another Username Tesh Shit</div>
+						<div class="status">
+							<i class="fa fa-circle online"></i> online
+						</div>
+					</div>
+				</div>
+				<div class="chatContact">
+					<img src="/Misc/ProfilePictures/32387568ae91f2b547d658c740e5761b29" alt="avatar" />
+					<div class="about">
+						<div class="name">Wtah Thava</div>
+						<div class="status">
+							<i class="fa fa-circle offline"></i> online
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="chatContactListFloat">
+				<span>Write messages to your friends</span>
+			</div>
+		</div>
+	</div>
+
+
 <div id="page-container">
 	<div id="content" class="content">
 		<div id="contentContainerScroll" class="content-container fill-screen-no-scroll">
@@ -211,6 +284,7 @@
 		<script src="./JS/Classes/DrawClass.js"></script>	
 		<script src="./JS/Drawing.js"></script>	
 		<script src="./JS/Admin.js"></script>	
+		<script src="./JS/Notifications.js"></script>	
 
 		<script src="https://apis.google.com/js/client:platform.js?onload=onLoadGoogleCallback" async defer></script>	
 	

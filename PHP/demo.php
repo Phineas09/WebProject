@@ -10,6 +10,7 @@
     require_once('./User.php');
     require_once('./Render.php');
     require_once('./FileUploader.php');
+    require_once('./Chat.php');
 
 	ORM::configure('mysql:host=localhost;dbname=mtarena');
 	ORM::configure('username', 'root');
@@ -22,6 +23,17 @@
     $problemManager = new ProblemsManager();
 
     $db = ORM::get_db();
+
+
+/*
+    where_raw
+$people = ORM::for_table('person')
+            ->where('name', 'Fred')
+            ->where_raw('(`age` = ? OR `age` = ?)', array(20, 25))
+            ->order_by_asc('name')
+            ->find_many();
+*/
+
 
     $users = "
     CREATE TABLE IF NOT EXISTS users (
@@ -137,7 +149,6 @@
             CONSTRAINT fk_user_details FOREIGN KEY (user) REFERENCES users(id)
     );";
 
-
     $eventUsersOnline = '
         CREATE EVENT usersOnline
             ON SCHEDULE
@@ -146,6 +157,16 @@
                 UPDATE users u
                 INNER JOIN user_details ud ON u.id = ud.user
                 SET u.online = if(NOW() - ud.lastAct < 60 , 1, 0);
+    ';
+
+    $userNotifications = '
+        CREATE TABLE IF NOT EXISTS user_notifications (
+            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            user INTEGER not null,
+            data TEXT,
+            new INTEGER DEFAULT 0,
+            CONSTRAINT fk_notifications_user FOREIGN KEY (user) REFERENCES users(id)
+        );
     ';
 
     $db->exec($users);
@@ -158,6 +179,7 @@
     $db->exec($privilege);
     $db->exec($user_details);
     $db->exec('SET GLOBAL event_scheduler="ON";');
+    $db->exec($userNotifications);
     //$db->exec($eventUsersOnline);
 
     header("Content-Type: application/json");
@@ -274,8 +296,44 @@
         try {
             
             $user = new User();
+
+            if(isset($_MyPost->markNotificationsRead)) {
+
+                $user->markNotificationAsRead();
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+                exit;
+            }
+
+            if(isset($_MyPost->fetchNotificationsAll)) {
+
+                $notifications = $user->getNotificationsAll();
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'notifications' => $notifications,
+                    ));
+                exit;
+            }
+
+            if(isset($_MyPost->fetchNotifications)) {
+
+                $notifications = $user->getNotifications();
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'notifications' => $notifications["notifications"],
+                        'newNotifications' => $notifications["newNotifications"]
+                    ));
+                exit;
+            }
+
             $user->markLastAct();
-            
+            //Get notifications
             echo json_encode(
                 array(
                     'statusCode' => 200
