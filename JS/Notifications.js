@@ -42,6 +42,12 @@ $(document).ready(function() {
         }
     })
 
+    $("#chatInputMessage").on('keyup', function (e) {
+        if (e.keyCode === 13) {
+            $('.chatInputSendButton').click();
+        }
+    });
+
 });
 
 function fetchAllNotifications() {

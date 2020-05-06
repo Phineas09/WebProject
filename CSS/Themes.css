@@ -19,6 +19,10 @@
 
 	--error: #cc0606;
 	--success: #6ba63c;
+
+	--fromChatColor: #72b872;
+	--meChatColor: #339933;
+
 }
 
 :root[theme='blue'] {
