@@ -169,6 +169,35 @@ $people = ORM::for_table('person')
         );
     ';
 
+
+    $userFriends = '
+        CREATE TABLE IF NOT EXISTS user_friends (
+            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            user INTEGER not null,
+            friend INTEGER not null,
+            accepted INTEGER DEFAULT 0,
+            newMessage INTEGER DEFAULT 0,
+            CONSTRAINT fk_user_friends FOREIGN KEY (user) REFERENCES users(id),
+            CONSTRAINT fk_user_friends_friend FOREIGN KEY (friend) REFERENCES users(id)
+        );
+    ';
+
+    $userMessages = '
+        CREATE TABLE IF NOT EXISTS user_messages (
+            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+            `from` INTEGER not null,
+            `to` INTEGER not null,
+            message TEXT not null,
+            `read` INTEGER DEFAULT 0,
+            `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT fk_user_messages_from FOREIGN KEY (`from`) REFERENCES users(id),
+            CONSTRAINT fk_user_messages_to FOREIGN KEY (to) REFERENCES users(id)
+        );  
+    ';
+
+
+    //! Message table incoming
+
     $db->exec($users);
     $db->exec($problems);
     $db->exec($problems_solved);
@@ -180,6 +209,7 @@ $people = ORM::for_table('person')
     $db->exec($user_details);
     $db->exec('SET GLOBAL event_scheduler="ON";');
     $db->exec($userNotifications);
+    $db->exec($userFriends);
     //$db->exec($eventUsersOnline);
 
     header("Content-Type: application/json");
@@ -564,6 +594,116 @@ $people = ORM::for_table('person')
         }
         exit;
     }
+
+
+    //? Chat part here!#!@
+
+    if(isset($_MyPost->chat)) {
+        try {
+
+            if(isset($_MyPost->getFriendsInfoFormatted)) {
+
+                $chat = new Chat();
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'friendList' => $chat->getFriendsFormatted()
+                    ));
+
+                exit;
+            }
+
+            if(isset($_MyPost->pushMessage)) {
+
+                Chat::pushMessage($_MyPost->userId, $_MyPost->message);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200
+                    ));
+
+                exit;
+            }
+
+            if(isset($_MyPost->getMessagesUser)) {
+
+                $chat = Chat::getInstance($_MyPost->userId);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'messages' => $chat->getMessagesFormatted()
+                    ));
+
+                exit;
+            }
+
+            if(isset($_MyPost->messagesOnline)) {
+
+                $user = new User();
+
+                //Get online users
+                $result = ORM::for_table('users')
+                    ->inner_join('user_friends', array( 'user_friends.friend', '=', 'users.id'))
+                    ->where(array('users.online' => 1, 'user_friends.user' => $user->getId() ))
+                    ->find_many();
+
+                $onlineUsers = "";
+                if($result) {
+                    foreach($result as $users) {
+                        $onlineUsers = $onlineUsers . $users->friend . ", ";
+                    }
+                }
+
+
+                $newMessagesFrom = "";
+
+
+                $result = ORM::for_table('user_friends')
+                ->where(array('user' => $user->getId(), "newMessage" => 1, "accepted" => 1)) 
+                ->find_many();
+
+                if($result) {
+                    foreach($result as $user_friends) {
+                        $newMessagesFrom = $newMessagesFrom . $user_friends->friend . ", ";
+                    }
+                }
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'onlineUsers' => $onlineUsers,
+                        'newMessages' => $newMessagesFrom
+                    ));
+
+                exit;
+            }
+
+            if(isset($_MyPost->pullMessages)) {
+
+                $chat = Chat::getInstance($_MyPost->userId);
+
+                echo json_encode(
+                    array(
+                        'statusCode' => 200,
+                        'messages' => $chat->pullMessagesFormatted()
+                    ));
+
+                exit;
+            }
+
+        } 
+        catch (Exception $e) {
+            echo json_encode(
+                array(
+                    'statusCode' => 404,
+                    'Caught exception: ' => $e->getMessage()
+                ));
+        }
+        exit;
+    }
+
 
     //! Split those in admin and other class ?
 

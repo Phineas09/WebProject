@@ -11,8 +11,6 @@ var initial_data = [
 
 $(document).ready(function() {
 
-    fetchAllNotifications();
-    window.setInterval(fetchNotifications , 60000);
 
     $('.notification').click(function(){
 
@@ -72,12 +70,29 @@ function fetchAllNotifications() {
         });
 }
 
+function fetchFriendsInfo() {
+    makeHttpRequest(function() {
+        if(this.readyState == 4 && this.status == 200) {
+            //console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                document.getElementById("chatContactItems").innerHTML = response.friendList;
+            }
+        }
+    },
+    {
+        "chat" : true,
+        "getFriendsInfoFormatted" : true
+    });
+}
+
+
 function fetchNotifications(format = null) {
 
     if(!format) {
         fetchFunction = function () {
             if(this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
+                //console.log(this.responseText);
                 var response = JSON.parse(this.responseText);
                 if(response.statusCode == 200) {
                     
@@ -182,12 +197,10 @@ function closeChatOutside(event) {
     var chat = document.getElementById("chatContainer");
     let targetElement = event.target; // clicked element
     let openChat = document.getElementById("chatFloatOpen");
-    //console.log(targetElement);
     do {
         if (targetElement == chat) {
             return;
         }
-        // Go up the DOM
         targetElement = targetElement.parentNode;
         if(targetElement != null) {
             if(targetElement == openChat)
@@ -195,6 +208,23 @@ function closeChatOutside(event) {
         }
     } while (targetElement);
     closeChat();
+}
+
+function closeChatMessageBox(event) {
+    var chat = document.getElementById("chatBox");
+    let targetElement = event.target; // clicked element
+    let openChat = document.getElementById("chatContainer");
+    do {
+        if (targetElement == chat) {
+            return;
+        }
+        targetElement = targetElement.parentNode;
+        if(targetElement != null) {
+            if(targetElement == openChat)
+                return;
+        }
+    } while (targetElement);
+    closeChatMessage();
 }
 
 function openChat() {
@@ -214,4 +244,247 @@ function closeChat() {
 }
 
 
+var currentChatWindow = null;
+var currentUserId = null;
 
+
+function openChatMessage(publisher) {
+
+    formatChatMessage(publisher);
+
+    document.getElementById("chatContainer").classList.remove("chatContainerActive");
+    document.getElementById("chatContactList").classList.add("hidden");
+    document.getElementById("chatBox").classList.add("chatBoxActive");
+
+    document.removeEventListener("click", closeChatOutside);
+    document.addEventListener("click", closeChatMessageBox);
+
+
+    currentUserId = document.getElementById("hiddenChatBoxId").innerHTML;
+
+    if(!currentChatWindow && currentUserId) {
+        currentChatWindow = setInterval(pullMessages, 1000);
+    }
+
+}
+
+function closeChatMessage() {
+
+    document.getElementById("chatBox").classList.remove("chatBoxActive");
+
+    document.getElementById("chatContactList").classList.remove("hidden");
+    document.getElementById("chatContainer").classList.add("chatContainerActive");
+
+    document.removeEventListener("click", closeChatMessageBox);
+    document.addEventListener("click", closeChatOutside);
+
+    if(currentChatWindow && currentUserId) {
+        clearInterval(currentChatWindow);
+        currentChatWindow = null;
+        currentUserId = null;
+    }
+
+}
+
+function sendChatMessage(publisher) {
+    inputValue = document.getElementById("chatInputMessage").value;
+    document.getElementById("chatInputMessage").value = "";
+
+    let chatBox = $('#chatBoxMessageArea');
+    let lastBoxChild = chatBox.children().last();
+    if(lastBoxChild.hasClass('message-right')) {
+        let html = $('<div class="bubble bubble-dark">' + inputValue + '</div>');
+        lastBoxChild.append(html);
+    } 
+    else {
+        let html = $('<div class="message message-right"><div class="bubble bubble-dark">' + inputValue + '</div></div>');
+        chatBox.append(html);
+    }
+
+    chatBox.scrollTop(chatBox.prop("scrollHeight"));
+
+    let userId = document.getElementById("hiddenChatBoxId").innerHTML;
+
+    pushMessage(inputValue, userId);
+
+}
+
+function formatChatMessage(publisher) {
+
+    //Format header, make pull request for messages
+    
+    let userId = publisher.getElementsByClassName("hiddenChatId")[0].innerHTML;
+    let userName = publisher.getElementsByClassName("name")[0].innerHTML;
+    let profileImage = publisher.childNodes[1].src;
+
+    document.getElementById("chatHeaderImage").src = profileImage;
+    document.getElementById("chatHeaderName").innerHTML = userName;
+    document.getElementById("hiddenChatBoxId").innerHTML = userId;
+
+    //Clear all messages
+    //document.getElementById("chatBoxMessageArea").innerHTML = "";
+
+    fillMessages(userId);
+}
+
+
+function fillMessages(userId) {
+    makeHttpRequest(function() {
+        if(this.readyState == 4 && this.status == 200) {
+            //console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                let chatBox = $('#chatBoxMessageArea');
+                chatBox.html(response.messages);
+                chatBox.scrollTop(chatBox.prop("scrollHeight"));
+            }
+        }
+    }
+        ,
+        {
+            "chat" : true,
+            "getMessagesUser" : true,
+            "userId" : userId
+        });
+}
+
+function pushMessage(message, userId) {
+
+    makeHttpRequest(function() {
+        if(this.readyState == 4 && this.status == 200) {
+            console.log(this.responseText);
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+            }
+        }
+    }
+        ,
+        {
+            "chat" : true,
+            "pushMessage" : true,
+            "userId" : userId,
+            "message" : message
+        });
+}
+
+function pullMessages() {
+
+    console.log("Requesting massages with -> ", currentUserId);
+
+    makeHttpRequest(function() {
+        if(this.readyState == 4 && this.status == 200) {
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+                let chatBox = $('#chatBoxMessageArea');
+                let html = $(response.messages);
+                chatBox.append(html);
+                chatBox.scrollTop(chatBox.prop("scrollHeight"));
+            }
+        }
+    }
+        ,
+        {
+            "chat" : true,
+            "pullMessages" : true,
+            "userId" : currentUserId
+        });
+}
+
+function ArrayDiff(A, B) {
+    return A.filter(function (a) {
+        return B.indexOf(a) == -1;
+    });
+}
+
+var onlineUsers = null;
+
+function messagesOnline() {
+
+    makeHttpRequest(function() {
+        if(this.readyState == 4 && this.status == 200) {
+            //console.log(this.responseText)
+            var response = JSON.parse(this.responseText);
+            if(response.statusCode == 200) {
+
+                if(onlineUsers) {
+
+                    let newOnlineUsersResp = (response.onlineUsers.split(',').filter(function(i){return i !== " " }));
+
+                    let offlineNumber = (ArrayDiff(onlineUsers, newOnlineUsersResp)).length;
+                    let newOnlineUsers = (ArrayDiff(newOnlineUsersResp, onlineUsers));
+
+                    let reloaded = 0;
+                    if(newOnlineUsers.length) {
+                        console.log(newOnlineUsers);
+                        reloaded = 1;
+
+                        fetchFriendsInfo();
+                        setInterval(makeFriendLoggedNotification(newOnlineUsers), 200);
+                    }
+
+                    if(offlineNumber) {
+                        if(!reloaded)
+                            fetchFriendsInfo();
+                    }
+
+                    onlineUsers = newOnlineUsersResp;
+
+                }
+                else {
+                    onlineUsers = (response.onlineUsers.split(',').filter(function(i){return i !== " " }));
+                }
+
+                if(response.newMessages) {
+                    let messagesFrom = response.newMessages.split(',').filter(function(i){return i !== " " });
+                }
+
+            }
+        }
+    }
+        ,
+        {
+            "chat" : true,
+            "messagesOnline" : true
+        });
+}
+
+
+function makeFriendLoggedNotification(newOnlineUsers) {
+
+    let containers = document.getElementsByClassName("hiddenChatId");
+
+    let newNofitications = [];
+
+    for(let container of containers) {
+        let userId = container.innerHTML;
+        if(newOnlineUsers.includes(userId)) {
+
+            let parent = container.parentElement;
+
+            let userName = parent.getElementsByClassName("name")[0].innerHTML;
+            let imgSrc = parent.childNodes[1].src;
+            let data = {};
+
+            data["text"] = "Is now Online!"; 
+            data["date"] = ""; 
+            data["read"] = false; 
+            data["name"] = userName; 
+            data["image"] = imgSrc; 
+            newNofitications.push(data);
+
+        }
+    }
+    if(newNofitications.length) {
+        let oldNotifications = JSON.parse(sessionStorage.getItem('notification'));
+
+        for(let notif of newNofitications)
+            oldNotifications.unshift(notif);
+        sessionStorage.removeItem('notification');
+        sessionStorage.setItem("notification", JSON.stringify(oldNotifications));
+        loadNotifications();
+    }
+}
+
+function chatBoxOpenProfile(publisher) {
+    pageChangeProfilePageUser(currentUserId);
+}

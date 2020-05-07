@@ -143,19 +143,27 @@
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /*
     Chat box
 */
 
+.chatBoxActive {
+    transform: scaleY(1) !important;
+    transform-origin: bottom;
+    transition: transform 0.4s ease-in-out;
+}
+
 .chatBox {
     position: fixed;
-    top: 200px;
-    height: 50vw;
+    bottom: 0;
     width: 100%;
     z-index: 1;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s ease-in-out;
 }
 
 .chatBox .chatBoxHeader {
@@ -188,7 +196,6 @@
     transform: scale(0.9);
     transition: transform 0.2s ease-in-out;
 }
-
 
 .chatBoxHeader .chatHeaderName {
 
@@ -295,7 +302,7 @@
 .chatInput .chatInputWrapper .chatInputSendButton {
     background-color: #fff;
     height: 100%;
-    width: 19%;
+    width: 18%;
     color: var(--fromChatColor);
     font-weight: bold;
     border: none;
@@ -308,10 +315,55 @@
 }
 
 
+@media screen and (min-width: 875px) {
 
+    .chatContainer {
+        width: 220px;
+        -ms-overflow-style: none;
+    }
 
+    .chatContainer::-webkit-scrollbar {
+        display: none;
+    }
 
+    .navbarHeader ~ .chatContainer .chatContactListFloat {
+        width: 220px;
+    }
 
+    .chatContactList {
+        height: 90%;
+    }
 
+    .chatFloatOpen {
+        position: fixed;
+        width: 10em;
+        height: 2em;
+        margin-right: 10%;
+        bottom: 0;
+        border: 2px solid var(--themeSecondary);
+        border-bottom: 0;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        background-color: white;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+    }
 
+}
 
+@media screen and (min-width: 716px) {
+
+    .chatBox {
+        position: fixed;
+        bottom: 0;
+        margin-right: 10%;
+        right: 0;
+        width: 60%;
+        z-index: 1;
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.4s ease-in-out;
+    }
+
+}

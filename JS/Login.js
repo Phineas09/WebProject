@@ -60,6 +60,7 @@ function recuringLoggedInRequest() {
 
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText);
 			var response = JSON.parse(this.responseText);
 			if(response.statusCode == 200) {
 			}
@@ -70,6 +71,8 @@ function recuringLoggedInRequest() {
 	});
 }
 
+var fetchNotificationsInterval = null;
+
 function setLoggedInNavbar() {
 	makeHttpRequest(function () {
 		if(this.readyState == 4 && this.status == 200) {
@@ -79,6 +82,14 @@ function setLoggedInNavbar() {
 				var navbarLogin = document.getElementById("hoverMenu");		
 				navbarLogin.innerHTML = response.navbar;
 				window.setInterval(recuringLoggedInRequest , 30000);
+				document.getElementById("chatFloatOpen").classList.remove("hidden");
+				document.getElementById("notificationCenter").classList.remove("hidden");
+				if(!fetchNotificationsInterval) {
+					fetchAllNotifications();
+					fetchNotificationsInterval = window.setInterval(fetchNotifications , 60000);
+					window.setInterval(messagesOnline , 60000);
+					fetchFriendsInfo();
+				}
 			}
 			else if(response.statusCode == 210) {
 				logOut(true);
@@ -95,6 +106,8 @@ function setLoggedOutNavbar() {
 	
 	window.clearInterval();
 	var navbarLi = document.getElementById("hoverMenu");
+	document.getElementById("chatFloatOpen").classList.add("hidden");
+	document.getElementById("notificationCenter").classList.add("hidden");
 	navbarLi.innerHTML = '<a id="navLogin" href="" onclick="popUpLogin(); return false">Login</a>';
 }
 
