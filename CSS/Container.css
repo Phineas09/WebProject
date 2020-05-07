@@ -183,7 +183,7 @@ ul.footer-links li a {
 	margin-top: -3%;
 }
  
-.gray-container > .content-container figcaption {
+.gray-container > .content-container aside {
 	font-weight: bold;
     color: var(--themePrimary);
 	padding-top: 20px;

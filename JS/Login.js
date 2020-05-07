@@ -87,7 +87,7 @@ function setLoggedInNavbar() {
 				if(!fetchNotificationsInterval) {
 					fetchAllNotifications();
 					fetchNotificationsInterval = window.setInterval(fetchNotifications , 60000);
-					window.setInterval(messagesOnline , 60000);
+					window.setInterval(messagesOnline , 1000);
 					fetchFriendsInfo();
 				}
 			}
